@@ -7,6 +7,9 @@ A command line interface do build and deploy haystacks.
 * Add Gherkin stories for Behavior Driven Development at /tests
 * 100% code test coverage
 
+
+---
+
 ## Setup your development environment
 
 ### Pointing your develoment directory to run within the $hs command
