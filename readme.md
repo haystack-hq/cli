@@ -3,7 +3,7 @@ A command line interface do build and deploy haystacks.
 
 ## Contributing Requirements
 * Create supporting docs at /docs
-.. * Add change history to the /docs/release-notes.md file
+..* Add change history to the /docs/release-notes.md file
 * Add Gherkin stories for Behavior Driven Development at /tests
 * 100% code test coverage
 
@@ -20,16 +20,16 @@ TODO
 
 
 ### Changing the default API endpoint
-By default the HayStack CLI points to the api.haystackhub.com.  You can update the cli endpoint with an environment variable.
+By default the HayStack CLI points to api.haystackhub.com.  You can update the cli endpoint with an environment variable.
 
 ```sh
-$ HAYSTACK-CLI-API-ENDPOINT="example-haystack-api.localhost"
+$ export HAYSTACK_CLI_API_ENDPOINT="example-haystack-api.localhost"
 ```
 
 To switch back to the default
 
 ```sh
-$ unset HAYSTACK-CLI-API-ENDPOINT
+$ unset HAYSTACK_CLI_API_ENDPOINT
 ```
 
 ### Switching to Debug Mode
@@ -42,19 +42,44 @@ Debug mode has three options:
 To turn debug mode on:
 
 ```sh
-$ HAYSTACK-CLI-DEBUG-MODE="log"
+$ export HAYSTACK_CLI_DEBUG_MODE="log"
 ```
 
 
 To turn debug mode off:
 
 ```sh
-$ HAYSTACK-CLI-DEBUG-MODE="off"
+$ export HAYSTACK_CLI_DEBUG_MODE="off"
 
 //or
 
-$ unset HAYSTACK-CLI-DEBUG-MODE
+$ unset HAYSTACK_CLI_DEBUG_MODE
 ```
+
+## Contributing to the /docs
+All docs are written in simple markdown language. We use a doc publishing tool called [mkdocs](http://www.mkdocs.org/). It allows us to make nice looking documents with a menu from markdown.
+
+### Installing mkdocs locally
+
+Follow the directions here to [install mkdocs](http://www.mkdocs.org/#installation) on your local machine.
+
+### Copiling and previewing the docs
+
+Start the docs compiler. 
+
+```sh
+$ mkdocs serve
+```
+
+mkdocs supports realtime updates, so changing your docs should update the help docs automatically.
+
+
+# Tools
+
+Markdown preview tool for sublime allows you to preview the markdown in realtime. 
+
+* https://packagecontrol.io/packages/Markdown%20Preview
+
 
 
 

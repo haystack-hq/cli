@@ -1,0 +1,10 @@
+site_name: HayStack CLI
+docs_dir: source
+site_dir: site
+theme: cinder
+pages:
+- Quickstart: quickstart/index.md
+- Guides: guides/index.md
+- Tutotials: tutorials/index.md
+- Release Notes: release-notes/index.md
+    
