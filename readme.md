@@ -19,14 +19,14 @@ TODO
 ### Changing the default API endpoint
 By default the HayStack CLI points to the api.haystackhub.com.  You can update the cli endpoint with an environment variable.
 
-```shell
-HAYSTACK-CLI-API-ENDPOINT="example-haystack-api.localhost"
+```sh
+$ HAYSTACK-CLI-API-ENDPOINT="example-haystack-api.localhost"
 ```
 
 To switch back to the default
 
-```shell
-unset HAYSTACK-CLI-API-ENDPOINT
+```sh
+$ unset HAYSTACK-CLI-API-ENDPOINT
 ```
 
 ### Switching to Debug Mode
@@ -38,19 +38,19 @@ Debug mode has three options:
 
 To turn debug mode on:
 
-```shell
-HAYSTACK-CLI-DEBUG-MODE="log"
+```sh
+$ HAYSTACK-CLI-DEBUG-MODE="log"
 ```
 
 
 To turn debug mode off:
 
-```shell
-HAYSTACK-CLI-DEBUG-MODE="off"
+```sh
+$ HAYSTACK-CLI-DEBUG-MODE="off"
 
 //or
 
-unset HAYSTACK-CLI-DEBUG-MODE
+$ unset HAYSTACK-CLI-DEBUG-MODE
 ```
 
 
