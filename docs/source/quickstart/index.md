@@ -14,7 +14,7 @@ The HayStack CLI is installed through the npm package manager.
 ** Install the HayStack CLI **
 
 ```sh
-> npm install haystackhub.cli
+> npm install haystackhub.cli -g
 ```
 
 ** Confirm the CLI is installed **
