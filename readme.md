@@ -68,6 +68,8 @@ All docs are written in simple markdown language. We use a doc publishing tool c
 
 ### Installing mkdocs locally
 
+*Note: running setup.sh as described in setting up your development environment should have installed mkdocs already.*
+
 Follow the directions here to [install mkdocs](http://www.mkdocs.org/#installation) on your local machine.
 
 ### Copiling and previewing the docs
