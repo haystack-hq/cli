@@ -23,13 +23,13 @@ TODO
 By default the HayStack CLI points to api.haystackhub.com.  You can update the cli endpoint with an environment variable.
 
 ```sh
-$ export HAYSTACK_CLI_API_ENDPOINT="example-haystack-api.localhost"
+> export HAYSTACK_CLI_API_ENDPOINT="example-haystack-api.localhost"
 ```
 
 To switch back to the default
 
 ```sh
-$ unset HAYSTACK_CLI_API_ENDPOINT
+> unset HAYSTACK_CLI_API_ENDPOINT
 ```
 
 ### Switching to Debug Mode
@@ -42,18 +42,18 @@ Debug mode has three options:
 To turn debug mode on:
 
 ```sh
-$ export HAYSTACK_CLI_DEBUG_MODE="log"
+> export HAYSTACK_CLI_DEBUG_MODE="log"
 ```
 
 
 To turn debug mode off:
 
 ```sh
-$ export HAYSTACK_CLI_DEBUG_MODE="off"
+> export HAYSTACK_CLI_DEBUG_MODE="off"
 
 //or
 
-$ unset HAYSTACK_CLI_DEBUG_MODE
+> unset HAYSTACK_CLI_DEBUG_MODE
 ```
 
 ## Contributing to the /docs
@@ -68,7 +68,8 @@ Follow the directions here to [install mkdocs](http://www.mkdocs.org/#installati
 Start the docs compiler. 
 
 ```sh
-$ mkdocs serve
+> cd docs
+> mkdocs serve
 ```
 
 mkdocs supports realtime updates, so changing your docs should update the help docs automatically.

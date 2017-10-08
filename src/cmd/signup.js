@@ -3,7 +3,18 @@ var inquirer = require('inquirer');
 var Promise = require('bluebird');
 
 
-var CmdSignup = function(){
+var CmdSignup = function(program){
+  var self = this;
+
+  program
+       .command('signup')
+       .description('Signup to HayStack')
+       .option("-e --email  [value]", "Email")
+       .option("-u --username  [value]", "Username")
+       .option("-p --password  [value]", "Password")
+       .action(function( cmd, options){
+           self.do(cmd);
+  });
 
 }
 
