@@ -27,6 +27,8 @@
     "mocha": "^4.0.1",
     "mock-stdin": "^0.3.1",
     "nyc": "^11.2.1",
-    "preferences": "^0.2.1"
+    "preferences": "^0.2.1",
+    "randomstring": "^1.1.5",
+    "sinon": "^4.0.1"
   }
 }
