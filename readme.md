@@ -12,6 +12,13 @@ A command line interface do build and deploy haystacks.
 
 ## Setup your development environment
 
+### project setup
+
+```sh
+> sh setup.sh
+```
+
+
 ### Pointing your develoment directory to run within the $hs command
 You may have an existing installation of HayStack CLI. In this case you will want to point the cli pointer to this development directory instead of the default.
 
