@@ -23,6 +23,7 @@
   "devDependencies": {
     "bluebird": "^3.5.1",
     "chai": "^4.1.2",
+    "inquirer": "^3.3.0",
     "inquirer-test": "^1.0.5",
     "mocha": "^4.0.1",
     "mock-stdin": "^0.3.1",

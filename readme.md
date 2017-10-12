@@ -15,7 +15,7 @@ A command line interface do build and deploy haystacks.
 ### project setup
 
 ```sh
-> sh setup.sh
+$ sh scripts/setup.sh
 ```
 
 
@@ -30,13 +30,13 @@ TODO
 By default the HayStack CLI points to api.haystackhub.com.  You can update the cli endpoint with an environment variable.
 
 ```sh
-> export HAYSTACK_CLI_API_ENDPOINT="example-haystack-api.localhost"
+$ export HAYSTACK_CLI_API_ENDPOINT="example-haystack-api.localhost"
 ```
 
 To switch back to the default
 
 ```sh
-> unset HAYSTACK_CLI_API_ENDPOINT
+$ unset HAYSTACK_CLI_API_ENDPOINT
 ```
 
 ### Switching to Debug Mode
@@ -49,18 +49,18 @@ Debug mode has three options:
 To turn debug mode on:
 
 ```sh
-> export HAYSTACK_CLI_DEBUG_MODE="log"
+$ export HAYSTACK_CLI_DEBUG_MODE="log"
 ```
 
 
 To turn debug mode off:
 
 ```sh
-> export HAYSTACK_CLI_DEBUG_MODE="off"
+$ export HAYSTACK_CLI_DEBUG_MODE="off"
 
 //or
 
-> unset HAYSTACK_CLI_DEBUG_MODE
+$ unset HAYSTACK_CLI_DEBUG_MODE
 ```
 
 ## Contributing to the /docs
@@ -77,19 +77,31 @@ Follow the directions here to [install mkdocs](http://www.mkdocs.org/#installati
 Start the docs compiler. 
 
 ```sh
-> cd docs
-> mkdocs serve
+$ cd docs
+$ mkdocs serve
 ```
 
 mkdocs supports realtime updates, so changing your docs should update the help docs automatically.
 
 
-# Tools
+### publishing the docs to S3
+
+Note: [aws cli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) needs to be installed and configured. 
+
+```
+$ sh scripts/docs-publish.sh
+```
+
+
+# References
 
 Markdown preview tool for sublime allows you to preview the markdown in realtime. 
 
 * https://packagecontrol.io/packages/Markdown%20Preview
 
+Examples and references for markdown witnh material theme
+
+* http://squidfunk.github.io/mkdocs-material/
 
 
 

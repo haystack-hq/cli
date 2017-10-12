@@ -1,0 +1,11 @@
+mark  {
+	box-shadow: none;
+    background-color: #efefef !important;
+    
+}
+
+.md-typeset mark {
+	background-color: none;
+	box-shadow: none;
+	padding: 5px;
+}

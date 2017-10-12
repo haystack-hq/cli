@@ -1,10 +1,30 @@
 site_name: HayStack CLI
 docs_dir: source
-site_dir: site
-theme: cinder
-pages:
+site_dir: build
+theme: material
+extra_css: [stylesheets/extra.css]
+markdown_extensions:
+  - admonition
+  - pymdownx.arithmatex
+  - pymdownx.betterem(smart_enable=all)
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist(custom_checkbox=true)
+  - pymdownx.tilde
+
+pages: 
+- Overview: index.md
+- Install: install/index.md
 - Quickstart: quickstart/index.md
-- Guides: guides/index.md
+- CLI: guides/index.md
 - Tutotials: tutorials/index.md
 - Release Notes: release-notes/index.md
     
