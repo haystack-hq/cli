@@ -74,14 +74,13 @@ Follow the directions here to [install mkdocs](http://www.mkdocs.org/#installati
 
 ### Copiling and previewing the docs
 
-Start the docs compiler. 
+Start the docs local server. 
 
 ```sh
-$ cd docs
-$ mkdocs serve
+$ sh scripts/docs-serve.sh
 ```
 
-mkdocs supports realtime updates, so changing your docs should update the help docs automatically.
+In serve mode, mkdocs supports realtime updates, so changing your docs should update the help docs automatically.
 
 
 ### publishing the docs to S3
