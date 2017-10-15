@@ -1,105 +1,146 @@
 #! /usr/bin/env node
-var inquirer = require('inquirer');
 var Promise = require('bluebird');
+var User = require('../lib/user');
+var Validator = require('../lib/validator');
 
 
-var CmdSignup = function(program){
+var CmdSignup = function(program, hayStackServiceAdapter, cmdPromptAdapter){
+
   var self = this;
+  this.hayStackServiceAdapter = hayStackServiceAdapter;
+  this.cmdPromptAdapter = cmdPromptAdapter;
+  this.validator = new Validator();
 
-  program
-       .command('signup')
-       .description('Signup to HayStack')
-       .option("-e --email  [value]", "Email")
-       .option("-u --username  [value]", "Username")
-       .option("-p --password  [value]", "Password")
-       .action(function( cmd, options){
-           self.do(cmd);
-  });
 
+    program
+        .command('signup')
+        .description('Signup to HayStack')
+        .option("-e --email  [value]", "Email")
+        .option("-p --password  [value]", "Password")
+        .action(
+            function( cmd ){
+                self.action(cmd);
+            });
+}
+
+CmdSignup.prototype.action = function(cmd) {
+    this.do(cmd)
+        .then(function (result) {
+            console.log(result);
+        })
+        .catch(function(err){ console.log(err)});
 }
 
 CmdSignup.prototype.do = function(options) {
-	
-	//get the username and validate that the username is unique.
+    var self = this;
 
-	this.promptUsername().then(function(answers){
-
-	});
+    return new Promise(function(resolve, reject) {
 
 
+        //placeholder for the user that we are trying to create
+        var user = new User();
 
-}
-
-
-CmdSignup.prototype.promptUsername = function(options) {
-	
-	//get the username and validate that the username is unique.
-
-	var questions = [
-       {
-           type: 'input',
-           name: 'username',
-           message: 'Please enter a unique username:'
-       }
-   	];
-
-   return inquirer.prompt(questions);
-
-}
+        //default to arguments when available
+        user.email = options.email;
+        user.password = options.password;
 
 
-CmdSignup.prototype.promptEmail = function(options) {
-	
-	//get the username and validate that the username is unique.
 
-	var questions = [
-       {
-           type: 'input',
-           name: 'email',
-           //default: userData.email,
-           message: 'Email:'
-       }
-   	];
 
-   return inquirer.prompt(questions);
+        //begin asking questions.
+        self.cmdPromptAdapter.ask(
+            {
+                questions: [
+                    {
+                        type: 'input',
+                        validate: self.validator.required,
+                        name: 'email',
+                        message: 'Email:'
+                    }
+                ],
+                args: {email: options.email}
+            }
+        )
+        .then(
+            function (answers) {
+                user.email = answers.email
+                return self.accountExists(user.email);
+            }
+        )
+        .then(
+            function () {
 
-}
+                return self.cmdPromptAdapter.ask(
+                    {
+                        questions: [
+                            {
+                                type: 'password',
+                                validate: self.validator.required,
+                                name: 'password',
+                                message: 'Password:'
+                            }
+                        ],
+                        args: {password: options.password}
+                    });
+            }
+        )
+        .then(
+            function (answers) {
 
-CmdSignup.prototype.promptPassword = function(options) {
-	
-	//get the username and validate that the username is unique.
-
-	var questions = [
-       {
-           type: 'password',
-           name: 'password',
-           //default: userData.email,
-           message: 'Password:'
-       }
-   	];
-
-   return inquirer.prompt(questions);
-
-}
-
-CmdSignup.prototype.promptPasswordRepeat = function(options) {
-	
-	//get the username and validate that the username is unique.
-
-	var questions = [
-       {
-           type: 'password',
-           name: 'password_repeat',
-           //default: userData.email,
-           message: 'Repeat Password:'
-       }
-   	];
-
-   return inquirer.prompt(questions);
+                user.password = answers.password;
+                return self.createAccount(user)
+            }
+        ).then(
+            function(account){
+                resolve("Your account has been created!");
+            }
+        )
+        .catch(
+            function (err) {
+                reject(err);
+            }
+        );
+    });
 
 }
 
 
 
+CmdSignup.prototype.accountExists = function(email) {
 
-module.exports = CmdSignup
+  var self = this;
+
+  return new Promise(function(resolve, reject){
+    
+    self.hayStackServiceAdapter.get("user", {email: email})
+    .then( 
+        function(result) { 
+            //if there re results, error
+
+            if(result.length == 0) {
+                resolve(true)
+            } else {
+                reject({message: "An account exists for the email you provided."});
+            }
+        }
+    )
+    .catch(
+        function(err){ reject(err) }
+    );
+
+  });
+}
+
+CmdSignup.prototype.createAccount = function(user) {
+    return new Promise(function(resolve, reject){
+        //console.log("creating account", user);
+        resolve({});
+    });
+}
+
+
+
+
+
+
+module.exports = CmdSignup;
