@@ -33,7 +33,8 @@ describe('cmd-signup', function() {
 
         var options = {
             email: "test@test.com",
-            password: "123456"
+            password: "123456",
+            username: "testusername"
         }
 
         return expect(cmdSignUp.do(options)).to.eventually.equal("Your account has been created!");
@@ -54,13 +55,39 @@ describe('cmd-signup', function() {
 
         var options = {
             email: "test@test.com",
-            password: "123456"
+            password: "123456",
+            username: "testusername"
         }
 
         return expect(cmdSignUp.do(options)).to.be.rejectedWith({message: 'An account exists for the email you provided.'});
 
 
     });
+
+
+    it("should provide an error if the username already exists as an account", function(){
+
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'test',
+            response: [{username:'testusername'}] //response containing a match
+        });
+
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+
+        var cmdSignUp = new CmdSignUp(program, hayStackServiceAdapter, cmdPromptAdapter);
+
+        var options = {
+            email: "test@test.com",
+            password: "123456",
+            username: "testusername"
+        }
+
+        return expect(cmdSignUp.do(options)).to.be.rejectedWith({message: 'That username is already in use.'});
+
+
+    });
+
+
 
     it("should provide an error if the api errors", function(){
 

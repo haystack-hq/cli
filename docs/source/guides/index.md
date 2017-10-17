@@ -47,6 +47,7 @@ Usage: signup [options]
   Options:
 
     -e, --email  [value]     	Email
+    -u, --username  [value]     Username
     -p, --password  [value]  	Password
     -h, --help              	Print usage information
 ```

@@ -16,6 +16,7 @@ var CmdSignup = function(program, hayStackServiceAdapter, cmdPromptAdapter){
         .command('signup')
         .description('Signup to HayStack')
         .option("-e --email  [value]", "Email")
+        .option("-u --username  [value]", "Username")
         .option("-p --password  [value]", "Password")
         .action(
             function( cmd ){
@@ -65,6 +66,28 @@ CmdSignup.prototype.do = function(options) {
             function (answers) {
                 user.email = answers.email
                 return self.accountExists(user.email);
+            }
+        ).then(
+            function (result){
+                return self.cmdPromptAdapter.ask(
+                    {
+                        questions: [
+                            {
+                                type: 'input',
+                                validate: self.validator.required,
+                                name: 'username',
+                                message: 'Username:'
+                            }
+                        ],
+                        args: {username: options.username}
+                    }
+                )
+            }
+
+        ).then(
+            function (answers) {
+                user.username = answers.username
+                return self.usernameExists(user.username);
             }
         )
         .then(
@@ -129,6 +152,32 @@ CmdSignup.prototype.accountExists = function(email) {
     );
 
   });
+}
+
+
+CmdSignup.prototype.usernameExists = function(username) {
+
+    var self = this;
+
+    return new Promise(function(resolve, reject){
+
+        self.hayStackServiceAdapter.get("user", {username: username})
+            .then(
+                function(result) {
+                    //if there re results, error
+
+                    if(result.length == 0) {
+                        resolve(true)
+                    } else {
+                        reject({message: "That username is already in use."});
+                    }
+                }
+            )
+            .catch(
+                function(err){ reject(err) }
+            );
+
+    });
 }
 
 CmdSignup.prototype.createAccount = function(user) {

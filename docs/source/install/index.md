@@ -37,7 +37,8 @@ Create your free HayStack account.
 ```
 $ hs signup
 
-email: youremail@provider.com
+email: myemail@provider.com
+username: myuniqueusername
 password: *******
 repeat-password: ******
 
