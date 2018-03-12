@@ -1,4 +1,4 @@
-# HayStack CLI
+# Haystack CLI
 A command line interface do build and deploy haystacks.
 
 ## Contributing Requirements
@@ -20,14 +20,14 @@ $ sh scripts/setup.sh
 
 
 ### Pointing your develoment directory to run within the $hs command
-You may have an existing installation of HayStack CLI. In this case you will want to point the cli pointer to this development directory instead of the default.
+You may have an existing installation of Haystack CLI. In this case you will want to point the cli pointer to this development directory instead of the default.
 
 TODO
 
 
 
 ### Changing the default API endpoint
-By default the HayStack CLI points to api.haystackhub.com.  You can update the cli endpoint with an environment variable.
+By default the Haystack CLI points to api.haystackhub.com.  You can update the cli endpoint with an environment variable.
 
 ```sh
 $ export HAYSTACK_CLI_API_ENDPOINT="example-haystack-api.localhost"

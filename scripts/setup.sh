@@ -2,6 +2,9 @@
 echo "Installing NPM dependencies";
 npm install;
 
+echo "Linking hs"
+npm link;
+
 echo "Installing mkdocs";
 pip install mkdocs;
 
