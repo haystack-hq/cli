@@ -21,7 +21,6 @@ var cmdPromptAdapter = new CmdPromptAdapter(inquirer);
 /* regisgter commands */
 const cmdFolder =__dirname + '/cmd';
 fs.readdirSync(cmdFolder).forEach(function(file) {
-
     var cmd = require(cmdFolder + "/" + file);
     var c = new cmd(program, apiServiceAdapter, cmdPromptAdapter);
 });

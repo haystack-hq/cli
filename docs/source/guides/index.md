@@ -135,16 +135,15 @@ List all your running stacks.
 ```
 $ hs stack list
 
-Usage: stack list [options] or stack ls [options]
+Usage: list|ls [options]
 
   List active stacks
 
 
   Options:
-    -a, --all 					List all stacks, including stacks created by other team members	
-    -i, --identifier [value]	The stack identifier. If omitted the stack in the current directory will be used
-    -h, --help 					Print usage information
 
+    -a, --all  list all stacks, including stacks created by other team members
+    -h, --help  output usage information
 ```
 
 ---
