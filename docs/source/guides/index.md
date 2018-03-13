@@ -142,7 +142,6 @@ Usage: list|ls [options]
 
   Options:
 
-    -a, --all  list all stacks, including stacks created by other team members
     -h, --help  output usage information
 ```
 

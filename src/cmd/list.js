@@ -14,8 +14,8 @@ var CmdList = function(program, hayStackServiceAdapter, cmdPromptAdapter){
     program
         .command('list')
         .alias('ls')
+        .usage(' ')
         .description('List active stacks')
-        .option('-a, --all', 'list all stacks, including stacks created by other team members')
         .action(function (cmd) {
             self.action(cmd)
         })
@@ -38,14 +38,17 @@ CmdList.prototype.do = function(options) {
     var self = this;
 
     var table = new Table({
-        head: ['id', 'provider', 'status', 'health']
+        head: ['identifier', 'provider', 'status', 'health'],
+        style: {
+            head: ['blue']
+        }
     })
 
     return new Promise(function (resolve, reject) {
 
         self.getStacks(options)
             .then(function (result) {
-                // add each result to the table
+                // add each stack from the result to the table
                 result.forEach(function (stack) {
                     table.push([
                         stack.identifier,
@@ -65,24 +68,18 @@ CmdList.prototype.do = function(options) {
 
 }
 
-// should return a promise
 CmdList.prototype.getStacks = function (options) {
 
     var self = this;
 
-    var data = {}
-    if (options.all) {
-        data.all = true
-    }
-
     return new Promise(function(resolve, reject) {
-        self.hayStackServiceAdapter.get('stacks', data)
+        self.hayStackServiceAdapter.get('stacks')
             .then(function (result) {
                 if (result.length) {
                     resolve(result)
                 }
                 else {
-                    reject('No stacks found.')
+                    reject('There are no stacks currently running.')
                 }
             })
             .catch(function (err) {
