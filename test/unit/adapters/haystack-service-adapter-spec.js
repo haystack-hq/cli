@@ -29,8 +29,9 @@ describe('haystack-service-adapter', function() {
         var haystackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
 
         assert(typeof haystackServiceAdapter.get === "function", "get method exists");
-        assert(typeof haystackServiceAdapter.create === "function", "create method exists");
-        assert(typeof haystackServiceAdapter.update === "function", "update method exists");
+        assert(typeof haystackServiceAdapter.post === "function", "create method exists");
+        assert(typeof haystackServiceAdapter.put === "function", "update method exists");
+        assert(typeof haystackServiceAdapter.patch === "function", "patch method exists");
         assert(typeof haystackServiceAdapter.delete === "function", "delete method exists");
 
     });
@@ -42,8 +43,9 @@ describe('haystack-service-adapter', function() {
         var haystackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
 
         expect(haystackServiceAdapter.get()).to.eventually.be.fulfilled;
-        expect(haystackServiceAdapter.create()).to.eventually.be.fulfilled;
-        expect(haystackServiceAdapter.update()).to.eventually.be.fulfilled;
+        expect(haystackServiceAdapter.post()).to.eventually.be.fulfilled;
+        expect(haystackServiceAdapter.put()).to.eventually.be.fulfilled;
+        expect(haystackServiceAdapter.patch()).to.eventually.be.fulfilled;
         expect(haystackServiceAdapter.delete()).to.eventually.be.fulfilled;
 
 

@@ -16,8 +16,8 @@ var HayStackServiceAdapter = function(apiAdapter){
 	this.apiAdapter = apiAdapter;
 }
 
-HayStackServiceAdapter.prototype.create = function(object, data){
-	return this.apiAdapter.request(this.headers, this.endpoint(object), 'create', data);
+HayStackServiceAdapter.prototype.post = function(object, data){
+	return this.apiAdapter.request(this.headers, this.endpoint(object), 'post', data);
 }
 
 
@@ -26,8 +26,12 @@ HayStackServiceAdapter.prototype.get = function(object, data){
 }
 
 
-HayStackServiceAdapter.prototype.update = function(object, data){
-    return this.apiAdapter.request(this.headers, this.endpoint(object), 'update', data);
+HayStackServiceAdapter.prototype.put = function(object, data){
+    return this.apiAdapter.request(this.headers, this.endpoint(object), 'put', data);
+}
+
+HayStackServiceAdapter.prototype.patch = function(object, data){
+    return this.apiAdapter.request(this.headers, this.endpoint(object), 'patch', data);
 }
 
 HayStackServiceAdapter.prototype.delete = function(object, data){

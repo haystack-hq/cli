@@ -104,38 +104,33 @@ Launch a stack in the cloud or on your local dev box.
 
 
 ```
-$ hs stack start
+$ hs start -h
 
-Usage: $ stack start [options]
+  Usage: start [options]
 
   Launch a stack
 
 
   Options:
-    -b, --background				Start stack in the background instead of holding up your terminal
-    -i, --identifier [value]		Name of your stack. If omitted a name will be created 
-    -l, --local						Start the stack on your local machine not in the cloud
-    								Defaults can be changed in preferences
-    -c, --cloud-provider			The cloud provider to use. If omitted your default cloud provider will be used
-    -x, --exclude-mount				No file system mounts to the stack will be created		
-    -p, --package					Specifiy a HayStack package on GitHub
-    -h, --help              		Print usage information
 
+    -i, --identifier [value]  name of your stack. If omitted, the folder name will be used
+    -x, --exclude-mount       no file system mounts to the stack will be created
+    -h, --help                output usage information
 
 ```
 
 
 ---
 
-## stack list
+## list
 
 List all your running stacks. 
 
 
 ```
-$ hs stack list
+$ hs list -h
 
-Usage: list|ls [options]
+Usage: list|ls
 
   List active stacks
 

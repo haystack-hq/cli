@@ -20,7 +20,7 @@ describe('cmd-prompt-adapter', function() {
 
     it('should NOT prompt if all questions have parameters', function() {
 
-        spy.reset();
+        spy.resetHistory();
 
         var options = {
             questions: [
@@ -47,7 +47,7 @@ describe('cmd-prompt-adapter', function() {
 
     it('should prompt once if all questions do NOT have parameters', function() {
 
-        spy.reset();
+        spy.resetHistory();
 
         /* add aanother question where the args are not provided */
         var options = {
@@ -75,7 +75,7 @@ describe('cmd-prompt-adapter', function() {
 
     it('should prompt once if an arg has a null value', function() {
 
-        spy.reset();
+        spy.resetHistory();
 
         /* add aanother question where the args are not provided */
         var options = {
