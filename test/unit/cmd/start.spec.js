@@ -9,7 +9,7 @@ var chai = require('chai');
 var expect = chai.expect;
 var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
-var Table = require('cli-table')
+const WebSocket = require('ws');
 
 describe('cmd-start', function () {
 
@@ -38,20 +38,7 @@ describe('cmd-start', function () {
         "health": "healthy"
     }
 
-    it('should get stack as response', function () {
-
-        var apiAdapter = new ApiTestAdapter({
-            uri: 'stacks',
-            response: response
-        })
-        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
-
-        expect(cmdStart.do({})).to.eventually.equal(response)
-
-    })
-
-    it('should have current folder and mount true by default', function () {
+    it('should have current folder and mount true by default for request', function () {
 
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
@@ -68,7 +55,7 @@ describe('cmd-start', function () {
     })
 
 
-    it('should have specific identifier', function () {
+    it('should have specific identifier for request', function () {
 
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
@@ -86,7 +73,7 @@ describe('cmd-start', function () {
     })
 
 
-    it('should have mount as false', function () {
+    it('should have mount as false for request', function () {
 
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
@@ -101,6 +88,177 @@ describe('cmd-start', function () {
 
         expect(cmdStart.parseOptions(options)).to.contain({mount: false})
 
+    })
+
+    it('should get stack as response', function () {
+
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            response: response
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
+
+        expect(cmdStart.do({})).to.eventually.equal(response)
+
+    })
+
+    it('triggers the receiving of websocket messages', function (done) {
+
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            response: response
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
+
+        const WebSocket = require('ws');
+
+        const wss = new WebSocket.Server({ port: 3111 });
+
+        var response0 = {
+            event: 'haystack-change',
+            data: {
+                identifier: 'test',
+                services: [
+                    {
+                        name: 'web_1',
+                        status: 'starting',
+                        exists: true,
+                        is_running: true,
+                        is_provisioned: false,
+                        is_healthy: false
+                    },
+                    {
+                        name: 'web_2',
+                        status: 'starting',
+                        exists: true,
+                        is_running: true,
+                        is_provisioned: false,
+                        is_healthy: false
+                    }
+                ],
+                status: 'starting',
+                health: 'unhealthy',
+                terminated_on: null
+            }
+        }
+
+        var response1 = {
+            event: 'haystack-change',
+            data: {
+                identifier: 'test',
+                services: [
+                    {
+                        name: 'web_1',
+                        status: 'provisioning',
+                        exists: true,
+                        is_running: true,
+                        is_provisioned: false,
+                        is_healthy: false
+                    },
+                    {
+                        name: 'web_2',
+                        status: 'provisioning',
+                        exists: true,
+                        is_running: true,
+                        is_provisioned: false,
+                        is_healthy: false
+                    }
+                ],
+                status: 'provisioning',
+                health: 'unhealthy',
+                terminated_on: null
+            }
+        }
+
+        var response2 = {
+            event: 'haystack-change',
+            data: {
+                identifier: 'test',
+                services: [
+                    {
+                        name: 'web_1',
+                        status: 'running',
+                        exists: true,
+                        is_running: true,
+                        is_provisioned: false,
+                        is_healthy: false
+                    },
+                    {
+                        name: 'web_2',
+                        status: 'provisioning',
+                        exists: true,
+                        is_running: true,
+                        is_provisioned: false,
+                        is_healthy: false
+                    }
+                ],
+                status: 'provisioning',
+                health: 'unhealthy',
+                terminated_on: null
+            }
+        }
+
+        var response3 = {
+            event: 'haystack-change',
+            data: {
+                identifier: 'test',
+                services: [
+                    {
+                        name: 'web_1',
+                        status: 'running',
+                        exists: true,
+                        is_running: true,
+                        is_provisioned: false,
+                        is_healthy: false
+                    },
+                    {
+                        name: 'web_2',
+                        status: 'running',
+                        exists: true,
+                        is_running: true,
+                        is_provisioned: false,
+                        is_healthy: false
+                    }
+                ],
+                status: 'running',
+                health: 'healthy',
+                terminated_on: null
+            }
+        }
+
+        wss.on('connection', function connection(ws) {
+            ws.on('message', function incoming(message) {
+                console.log('received: %s', message);
+            });
+
+            ws.send(JSON.stringify(response0));
+            ws.send(JSON.stringify(response1));
+            ws.send(JSON.stringify(response2));
+            ws.send(JSON.stringify(response3));
+        });
+
+
+        const ws = new WebSocket('ws://127.0.0.1:3111/stacks/stream');
+
+        ws.on('message', function incoming(m) {
+            var message = JSON.parse(m)
+            var event = message.event
+            var data = message.data
+
+            expect(event).to.equal('haystack-change')
+            expect(data.identifier).to.equal('test')
+
+            if (data.status === 'running') {
+                ws.close()
+                wss.close()
+            }
+        })
+
+        cmdStart.do({})
+
+        done()
     })
 
 })

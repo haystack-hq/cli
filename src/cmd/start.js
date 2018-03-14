@@ -2,6 +2,16 @@
 var Promise = require('bluebird');
 var Validator = require('../lib/validator');
 var colors = require('colors');
+var Spinner = require('cli-spinner').Spinner;
+const config = require('../config')
+const WebSocket = require('ws');
+
+const consoleMessages = {
+    starting: colors.green('%s stack is starting...'),
+    provisioning: colors.yellow('%s stack is provisioning.'),
+    running: colors.green('%s stack is running!'),
+    impaired: colors.red("Something went wrong when launching %s stack and it's not fully functional.")
+}
 
 var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter){
 
@@ -23,9 +33,57 @@ var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter){
 
 CmdStart.prototype.action = function(cmd) {
 
+    var self = this
+
     this.do(cmd)
         .then(function (result) {
-            colors.green('Your stack is starting...')
+            const ws = new WebSocket(config.haystack_websocket_endpoint);
+            ws.on('error', function (err) {
+                console.error(err)
+            })
+
+            var spinner = new Spinner('%s')
+
+            var received = {}
+
+            self.spinner(spinner, 'start')
+
+            console.log(consoleMessages.starting, result.identifier)
+
+            ws.on('message', function incoming(m) {
+                var message = JSON.parse(m)
+                var event = message.event
+                var data = message.data
+
+                // if (data.identifier === result.identifier)
+                {
+                    self.spinner(spinner, 'stop')
+
+                    // switch between statuses for output messages
+                    switch(data.status) {
+                        case 'provisioning':
+                            if ( ! received.provisioning) {
+                                received.provisioning = true
+                                console.log(consoleMessages.provisioning, data.identifier)
+                            }
+                            self.spinner(spinner, 'start')
+                            break
+                        case 'impaired':
+                            received.impaired = true
+                            console.log(consoleMessages.impaired, data.identifier)
+                            ws.close()
+                            break
+                        case 'running':
+                            received.running = true
+                            console.log(consoleMessages.running, data.identifier)
+                            ws.close()
+                            break
+                        default:
+                            ws.close()
+                            break
+                    }
+                }
+            })
         })
         .catch(function (err){
             console.log(err)
@@ -85,6 +143,19 @@ CmdStart.prototype.startStack = function (data) {
             })
     })
 
+}
+
+CmdStart.prototype.spinner = function (spinner, action) {
+    switch (action) {
+        case 'start':
+            spinner.setSpinnerString('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏')
+            spinner.start()
+            break
+        case 'stop':
+        default:
+            spinner.stop(true)
+            break
+    }
 }
 
 module.exports = CmdStart;

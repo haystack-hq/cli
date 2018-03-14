@@ -104,7 +104,7 @@ Launch a stack in the cloud or on your local dev box.
 
 
 ```
-$ hs start -h
+$ hs start --help
 
   Usage: start [options]
 
@@ -113,10 +113,9 @@ $ hs start -h
 
   Options:
 
-    -i, --identifier [value]  name of your stack. If omitted, the folder name will be used
-    -x, --exclude-mount       no file system mounts to the stack will be created
-    -h, --help                output usage information
-
+    -i, --identifier <name>  name of your stack. If omitted, the folder name will be used
+    -x, --exclude-mount      no file system mounts to the stack will be created
+    -h, --help               output usage information
 ```
 
 
