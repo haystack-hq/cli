@@ -10,7 +10,8 @@ const consoleMessages = {
     starting: colors.green('%s stack is starting...'),
     provisioning: colors.yellow('%s stack is provisioning.'),
     running: colors.green('%s stack is running!'),
-    impaired: colors.red("Something went wrong when launching %s stack and it's not fully functional.")
+    impaired: colors.red("Something went wrong when launching %s stack and it's not fully functional."),
+    serviceRunning: '%s service is %s'
 }
 
 var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter){
@@ -44,20 +45,31 @@ CmdStart.prototype.action = function(cmd) {
 
             var spinner = new Spinner('%s')
 
-            var received = {}
-
-            self.spinner(spinner, 'start')
+            var received = { services: {} }
+            result.services.forEach(function (service) {
+                received.services[service.name] = service.status
+            })
 
             console.log(consoleMessages.starting, result.identifier)
+
+            self.spinner(spinner, 'start')
 
             ws.on('message', function incoming(m) {
                 var message = JSON.parse(m)
                 var event = message.event
                 var data = message.data
 
-                // if (data.identifier === result.identifier)
+                if (data.identifier === result.identifier)
                 {
                     self.spinner(spinner, 'stop')
+
+                    // print services' updates
+                    data.services.forEach(function (service) {
+                        if(received.services[service.name] !== service.status) {
+                            received.services[service.name] = service.status
+                            console.log(consoleMessages.serviceRunning, service.name, service.status)
+                        }
+                    })
 
                     // switch between statuses for output messages
                     switch(data.status) {
@@ -66,6 +78,7 @@ CmdStart.prototype.action = function(cmd) {
                                 received.provisioning = true
                                 console.log(consoleMessages.provisioning, data.identifier)
                             }
+
                             self.spinner(spinner, 'start')
                             break
                         case 'impaired':

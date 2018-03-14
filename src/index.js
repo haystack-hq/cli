@@ -10,7 +10,7 @@ var CmdPromptAdapter = require('./adapters/cmd-prompt-adapter');
 var config = require('./config.js');
 
 /* define api options */
-var apiOptions = { uri: config.haystack_api_enpoint, response: [] };
+var apiOptions = { uri: config.haystack_api_enpoint, response: [] }
 
 
 /* setup the adapters */
@@ -18,7 +18,7 @@ var apiAdapter = new ApiAdapter(apiOptions);
 var apiServiceAdapter = new HayStackServiceAdapter(apiAdapter);
 var cmdPromptAdapter = new CmdPromptAdapter(inquirer);
 
-/* regisgter commands */
+/* register commands */
 const cmdFolder =__dirname + '/cmd';
 fs.readdirSync(cmdFolder).forEach(function(file) {
     var cmd = require(cmdFolder + "/" + file);
