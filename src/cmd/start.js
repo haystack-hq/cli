@@ -99,7 +99,7 @@ CmdStart.prototype.action = function(cmd) {
             })
         })
         .catch(function (err){
-            console.log(colors.red(err))
+            console.log(colors.red(err.message))
         });
 
 }

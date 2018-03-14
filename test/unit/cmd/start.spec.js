@@ -38,6 +38,20 @@ describe('cmd-start', function () {
         "health": "healthy"
     }
 
+    it('should err trying to start the stack', function () {
+
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            error: 'The stack could not be launched.'
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
+
+        expect(cmdStart.do({})).to.be.rejectedWith('The stack could not be launched.')
+
+    })
+
+
     it('should have current folder and mount true by default for request', function () {
 
         var apiAdapter = new ApiTestAdapter({
