@@ -10,9 +10,12 @@ var expect = chai.expect;
 var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const WebSocket = require('ws');
+var Printer = require('../../../src/lib/printer')
+var colors = require('colors');
 
 describe('cmd-start', function () {
 
+    var printer = new Printer()
     var cmdPromptAdapter = new CmdPromptAdapter(new InquireTestAdapter());
     var response = {
         "identifier": "test",
@@ -37,6 +40,7 @@ describe('cmd-start', function () {
         "status": "starting",
         "health": "healthy"
     }
+    var websocketConfig = { uri: 'ws://127.0.0.1:3000/stacks/stream' }
 
     it('should err trying to start the stack', function () {
 
@@ -45,7 +49,7 @@ describe('cmd-start', function () {
             error: 'The stack could not be launched.'
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
 
         expect(cmdStart.do({})).to.be.rejectedWith('The stack could not be launched.')
 
@@ -59,7 +63,7 @@ describe('cmd-start', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
 
         expect(cmdStart.parseOptions({})).to.contain({
             directory: process.cwd(),
@@ -76,7 +80,7 @@ describe('cmd-start', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
 
         var options = {
             identifier: 'my-identifier'
@@ -94,7 +98,7 @@ describe('cmd-start', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
 
         var options = {
             excludeMount: true
@@ -111,20 +115,13 @@ describe('cmd-start', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
 
         expect(cmdStart.do({})).to.eventually.equal(response)
 
     })
 
-    it('triggers the receiving of websocket messages', function (done) {
-
-        var apiAdapter = new ApiTestAdapter({
-            uri: 'stacks',
-            response: response
-        })
-        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
+    it('it should print feedback messages', function (done) {
 
         const wss = new WebSocket.Server({ port: 3111 });
 
@@ -251,24 +248,22 @@ describe('cmd-start', function () {
             ws.send(JSON.stringify(response3));
         });
 
-
-        const ws = new WebSocket('ws://127.0.0.1:3111/stacks/stream');
-
-        ws.on('message', function incoming(m) {
-            var message = JSON.parse(m)
-            var event = message.event
-            var data = message.data
-
-            expect(event).to.equal('haystack-change')
-            expect(data.identifier).to.equal('test')
-
-            if (data.status === 'running') {
-                ws.close()
-                wss.close()
-            }
+        printer = new Printer(function (message) {
+            // console.log(message)
+            // expect(message).to.equal(colors.green('test stack is starting...'))
         })
 
-        cmdStart.do({})
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            response: response
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+
+
+        cmdStart.action({})
+
+        wss.close()
 
         done()
     })

@@ -3,24 +3,25 @@ var Promise = require('bluebird');
 var Validator = require('../lib/validator');
 var colors = require('colors');
 var Spinner = require('cli-spinner').Spinner;
-const config = require('../config')
 const WebSocket = require('ws');
 
 const consoleMessages = {
-    starting: colors.green('%s stack is starting...'),
-    provisioning: colors.yellow('%s stack is provisioning.'),
-    running: colors.green('%s stack is running!'),
-    impaired: colors.red("Something went wrong when launching %s stack and it's not fully functional."),
-    serviceRunning: '%s service is %s',
+    starting: colors.green('{0} stack is starting...'),
+    provisioning: colors.yellow('{0} stack is provisioning.'),
+    running: colors.green('{0} stack is running!'),
+    impaired: colors.red("Something went wrong when launching {0} stack and it's not fully functional."),
+    serviceRunning: '{0} service is {1}',
     noAgent: 'Could not connect to the agent. Is it running?'
 }
 
-var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter){
+var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer){
 
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
     this.validator = new Validator();
+    this.websocketConfig = websocketConfig
+    this.printer = printer
 
     program
         .command('start')
@@ -42,7 +43,7 @@ CmdStart.prototype.action = function(cmd) {
             self.websocketListeningAndConsoleMessaging(result)
         })
         .catch(function (err){
-            console.log(colors.red(err.message))
+            self.printer.print(colors.red(err.message))
         });
 
 }
@@ -106,47 +107,49 @@ CmdStart.prototype.startStack = function (data) {
 
 }
 
-CmdStart.prototype.spinner = function (spinner, action) {
-    switch (action) {
-        case 'start':
-            spinner.setSpinnerString('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏')
-            spinner.start()
-            break
-        case 'stop':
-        default:
-            spinner.stop(true)
-            break
-    }
-}
+// CmdStart.prototype.spinner = function (spinner, action) {
+//     switch (action) {
+//         case 'start':
+//             spinner.setSpinnerString('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏')
+//             spinner.start()
+//             break
+//         case 'stop':
+//         default:
+//             spinner.stop(true)
+//             break
+//     }
+// }
 
 CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
 
     var self = this
 
-    const ws = new WebSocket(config.haystack_websocket_endpoint);
+    const ws = new WebSocket(self.websocketConfig.uri);
 
-    var error = ws.on('error', function (err) {
-        console.log(colors.red(consoleMessages.noAgent))
+    var error = false
+
+    ws.on('error', function (err) {
+        self.printer.print(colors.red(consoleMessages.noAgent))
 
         ws.close()
 
-        return true
+        error = true
     })
 
     if (error) {
         return
     }
 
-    var spinner = new Spinner('%s')
+    // var spinner = new Spinner('%s')
 
     var received = { services: {} }
     result.services.forEach(function (service) {
         received.services[service.name] = service.status
     })
 
-    console.log(consoleMessages.starting, result.identifier)
+    self.printer.print(consoleMessages.starting, [result.identifier])
 
-    self.spinner(spinner, 'start')
+    // self.spinner(spinner, 'start')
 
     ws.on('message', function incoming(m) {
         var message = JSON.parse(m)
@@ -155,13 +158,13 @@ CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
 
         if (data.identifier === result.identifier)
         {
-            self.spinner(spinner, 'stop')
+            // self.spinner(spinner, 'stop')
 
             // print services' updates
             data.services.forEach(function (service) {
                 if(received.services[service.name] !== service.status) {
                     received.services[service.name] = service.status
-                    console.log(consoleMessages.serviceRunning, service.name, service.status)
+                    self.printer.print(consoleMessages.serviceRunning, [service.name, service.status])
                 }
             })
 
@@ -170,19 +173,19 @@ CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
                 case 'provisioning':
                     if ( ! received.provisioning) {
                         received.provisioning = true
-                        console.log(consoleMessages.provisioning, data.identifier)
+                        self.printer.print(consoleMessages.provisioning, [data.identifier])
                     }
 
-                    self.spinner(spinner, 'start')
+                    // self.spinner(spinner, 'start')
                     break
                 case 'impaired':
                     received.impaired = true
-                    console.log(consoleMessages.impaired, data.identifier)
+                    self.printer.print(consoleMessages.impaired, [data.identifier])
                     ws.close()
                     break
                 case 'running':
                     received.running = true
-                    console.log(consoleMessages.running, data.identifier)
+                    self.printer.print(consoleMessages.running, [data.identifier])
                     ws.close()
                     break
                 default:
