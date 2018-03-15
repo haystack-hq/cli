@@ -11,7 +11,8 @@ const consoleMessages = {
     provisioning: colors.yellow('%s stack is provisioning.'),
     running: colors.green('%s stack is running!'),
     impaired: colors.red("Something went wrong when launching %s stack and it's not fully functional."),
-    serviceRunning: '%s service is %s'
+    serviceRunning: '%s service is %s',
+    noAgent: 'Could not connect to the agent. Is it running?'
 }
 
 var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter){
@@ -38,65 +39,7 @@ CmdStart.prototype.action = function(cmd) {
 
     this.do(cmd)
         .then(function (result) {
-            const ws = new WebSocket(config.haystack_websocket_endpoint);
-            ws.on('error', function (err) {
-                console.error(err)
-            })
-
-            var spinner = new Spinner('%s')
-
-            var received = { services: {} }
-            result.services.forEach(function (service) {
-                received.services[service.name] = service.status
-            })
-
-            console.log(consoleMessages.starting, result.identifier)
-
-            self.spinner(spinner, 'start')
-
-            ws.on('message', function incoming(m) {
-                var message = JSON.parse(m)
-                var event = message.event
-                var data = message.data
-
-                if (data.identifier === result.identifier)
-                {
-                    self.spinner(spinner, 'stop')
-
-                    // print services' updates
-                    data.services.forEach(function (service) {
-                        if(received.services[service.name] !== service.status) {
-                            received.services[service.name] = service.status
-                            console.log(consoleMessages.serviceRunning, service.name, service.status)
-                        }
-                    })
-
-                    // switch between statuses for output messages
-                    switch(data.status) {
-                        case 'provisioning':
-                            if ( ! received.provisioning) {
-                                received.provisioning = true
-                                console.log(consoleMessages.provisioning, data.identifier)
-                            }
-
-                            self.spinner(spinner, 'start')
-                            break
-                        case 'impaired':
-                            received.impaired = true
-                            console.log(consoleMessages.impaired, data.identifier)
-                            ws.close()
-                            break
-                        case 'running':
-                            received.running = true
-                            console.log(consoleMessages.running, data.identifier)
-                            ws.close()
-                            break
-                        default:
-                            ws.close()
-                            break
-                    }
-                }
-            })
+            self.websocketListeningAndConsoleMessaging(result)
         })
         .catch(function (err){
             console.log(colors.red(err.message))
@@ -149,7 +92,12 @@ CmdStart.prototype.startStack = function (data) {
     return new Promise(function(resolve, reject) {
         self.hayStackServiceAdapter.post('stacks', data)
             .then(function (result) {
-                resolve(result)
+                if (Object.keys(result).length) {
+                    resolve(result)
+                }
+                else {
+                    reject({ message: consoleMessages.noAgent })
+                }
             })
             .catch(function (err) {
                 reject(err)
@@ -169,6 +117,80 @@ CmdStart.prototype.spinner = function (spinner, action) {
             spinner.stop(true)
             break
     }
+}
+
+CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
+
+    var self = this
+
+    const ws = new WebSocket(config.haystack_websocket_endpoint);
+
+    var error = ws.on('error', function (err) {
+        console.log(colors.red(consoleMessages.noAgent))
+
+        ws.close()
+
+        return true
+    })
+
+    if (error) {
+        return
+    }
+
+    var spinner = new Spinner('%s')
+
+    var received = { services: {} }
+    result.services.forEach(function (service) {
+        received.services[service.name] = service.status
+    })
+
+    console.log(consoleMessages.starting, result.identifier)
+
+    self.spinner(spinner, 'start')
+
+    ws.on('message', function incoming(m) {
+        var message = JSON.parse(m)
+        var event = message.event
+        var data = message.data
+
+        if (data.identifier === result.identifier)
+        {
+            self.spinner(spinner, 'stop')
+
+            // print services' updates
+            data.services.forEach(function (service) {
+                if(received.services[service.name] !== service.status) {
+                    received.services[service.name] = service.status
+                    console.log(consoleMessages.serviceRunning, service.name, service.status)
+                }
+            })
+
+            // switch between statuses for output messages
+            switch(data.status) {
+                case 'provisioning':
+                    if ( ! received.provisioning) {
+                        received.provisioning = true
+                        console.log(consoleMessages.provisioning, data.identifier)
+                    }
+
+                    self.spinner(spinner, 'start')
+                    break
+                case 'impaired':
+                    received.impaired = true
+                    console.log(consoleMessages.impaired, data.identifier)
+                    ws.close()
+                    break
+                case 'running':
+                    received.running = true
+                    console.log(consoleMessages.running, data.identifier)
+                    ws.close()
+                    break
+                default:
+                    ws.close()
+                    break
+            }
+        }
+    })
 }
 
 module.exports = CmdStart;

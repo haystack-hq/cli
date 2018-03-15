@@ -126,8 +126,6 @@ describe('cmd-start', function () {
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
         var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter);
 
-        const WebSocket = require('ws');
-
         const wss = new WebSocket.Server({ port: 3111 });
 
         var response0 = {

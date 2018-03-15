@@ -27,6 +27,3 @@ fs.readdirSync(cmdFolder).forEach(function(file) {
 
 
 program.parse(process.argv);
-
-
-
