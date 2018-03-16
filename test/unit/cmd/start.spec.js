@@ -40,7 +40,7 @@ describe('cmd-start', function () {
         "status": "starting",
         "health": "healthy"
     }
-    var websocketConfig = { uri: 'ws://127.0.0.1:3000/stacks/stream' }
+    var websocketConfig = { uri: 'ws://127.0.0.1:3111/stacks/stream' }
 
     it('should err trying to start the stack', function () {
 
@@ -124,34 +124,6 @@ describe('cmd-start', function () {
     it('it should print feedback messages', function (done) {
 
         const wss = new WebSocket.Server({ port: 3111 });
-
-        var response0 = {
-            event: 'haystack-change',
-            data: {
-                identifier: 'test',
-                services: [
-                    {
-                        name: 'web_1',
-                        status: 'starting',
-                        exists: true,
-                        is_running: true,
-                        is_provisioned: false,
-                        is_healthy: false
-                    },
-                    {
-                        name: 'web_2',
-                        status: 'starting',
-                        exists: true,
-                        is_running: true,
-                        is_provisioned: false,
-                        is_healthy: false
-                    }
-                ],
-                status: 'starting',
-                health: 'unhealthy',
-                terminated_on: null
-            }
-        }
 
         var response1 = {
             event: 'haystack-change',
@@ -242,15 +214,15 @@ describe('cmd-start', function () {
                 console.log('received: %s', message);
             });
 
-            ws.send(JSON.stringify(response0));
             ws.send(JSON.stringify(response1));
             ws.send(JSON.stringify(response2));
             ws.send(JSON.stringify(response3));
         });
 
+        var messages = []
+
         printer = new Printer(function (message) {
-            // console.log(message)
-            // expect(message).to.equal(colors.green('test stack is starting...'))
+            messages.push(message)
         })
 
         var apiAdapter = new ApiTestAdapter({
@@ -261,11 +233,27 @@ describe('cmd-start', function () {
         var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
 
 
-        cmdStart.action({})
+        var expected = [
+            colors.green('test stack is starting...'),
+            'web_1 service is provisioning',
+            'web_2 service is provisioning',
+            colors.yellow('test stack is provisioning...'),
+            'web_1 service is running',
+            'web_2 service is running',
+            colors.green('test stack is running!')
+        ]
 
-        wss.close()
+        cmdStart.websocketListeningAndConsoleMessaging(response)
+            .then(function () {
+                expect(messages).to.deep.equal(expected)
 
-        done()
+                done()
+                wss.close()
+            })
+            .catch(function () {console.log(colors.red('the expect failed'))})
+
+
+
     })
 
 })

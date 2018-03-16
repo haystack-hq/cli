@@ -7,10 +7,10 @@ const WebSocket = require('ws');
 
 const consoleMessages = {
     starting: colors.green('{0} stack is starting...'),
-    provisioning: colors.yellow('{0} stack is provisioning.'),
+    provisioning: colors.yellow('{0} stack is provisioning...'),
     running: colors.green('{0} stack is running!'),
     impaired: colors.red("Something went wrong when launching {0} stack and it's not fully functional."),
-    serviceRunning: '{0} service is {1}',
+    serviceStatus: '{0} service is {1}',
     noAgent: 'Could not connect to the agent. Is it running?'
 }
 
@@ -41,6 +41,8 @@ CmdStart.prototype.action = function(cmd) {
     this.do(cmd)
         .then(function (result) {
             self.websocketListeningAndConsoleMessaging(result)
+                .then(function () {})
+                .catch(function () {})
         })
         .catch(function (err){
             self.printer.print(colors.red(err.message))
@@ -124,75 +126,83 @@ CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
 
     var self = this
 
-    const ws = new WebSocket(self.websocketConfig.uri);
+    return new Promise(function (resolve, reject) {
 
-    var error = false
+        const ws = new WebSocket(self.websocketConfig.uri);
 
-    ws.on('error', function (err) {
-        self.printer.print(colors.red(consoleMessages.noAgent))
+        var error = false
 
-        ws.close()
+        ws.on('error', function (err) {
+            self.printer.print(colors.red(consoleMessages.noAgent))
 
-        error = true
-    })
+            ws.close()
 
-    if (error) {
-        return
-    }
+            reject()
 
-    // var spinner = new Spinner('%s')
+            error = true
+        })
 
-    var received = { services: {} }
-    result.services.forEach(function (service) {
-        received.services[service.name] = service.status
-    })
-
-    self.printer.print(consoleMessages.starting, [result.identifier])
-
-    // self.spinner(spinner, 'start')
-
-    ws.on('message', function incoming(m) {
-        var message = JSON.parse(m)
-        var event = message.event
-        var data = message.data
-
-        if (data.identifier === result.identifier)
-        {
-            // self.spinner(spinner, 'stop')
-
-            // print services' updates
-            data.services.forEach(function (service) {
-                if(received.services[service.name] !== service.status) {
-                    received.services[service.name] = service.status
-                    self.printer.print(consoleMessages.serviceRunning, [service.name, service.status])
-                }
-            })
-
-            // switch between statuses for output messages
-            switch(data.status) {
-                case 'provisioning':
-                    if ( ! received.provisioning) {
-                        received.provisioning = true
-                        self.printer.print(consoleMessages.provisioning, [data.identifier])
-                    }
-
-                    // self.spinner(spinner, 'start')
-                    break
-                case 'impaired':
-                    received.impaired = true
-                    self.printer.print(consoleMessages.impaired, [data.identifier])
-                    ws.close()
-                    break
-                case 'running':
-                    received.running = true
-                    self.printer.print(consoleMessages.running, [data.identifier])
-                    ws.close()
-                    break
-                default:
-                    ws.close()
-                    break
-            }
+        if (error) {
+            reject()
         }
+
+        // var spinner = new Spinner('%s')
+
+        var received = { services: {} }
+        result.services.forEach(function (service) {
+            received.services[service.name] = service.status
+        })
+
+        self.printer.print(consoleMessages.starting, [result.identifier])
+
+        // self.spinner(spinner, 'start')
+
+        ws.on('message', function incoming(m) {
+            var message = JSON.parse(m)
+            var event = message.event
+            var data = message.data
+
+            if (data.identifier === result.identifier)
+            {
+                // self.spinner(spinner, 'stop')
+
+                // print services' updates
+                data.services.forEach(function (service) {
+                    if(received.services[service.name] !== service.status) {
+                        received.services[service.name] = service.status
+                        self.printer.print(consoleMessages.serviceStatus, [service.name, service.status])
+                    }
+                })
+
+                // switch between statuses for output messages
+                switch(data.status) {
+                    case 'provisioning':
+                        if ( ! received.provisioning) {
+                            received.provisioning = true
+                            self.printer.print(consoleMessages.provisioning, [data.identifier])
+                        }
+
+                        // self.spinner(spinner, 'start')
+                        break
+                    case 'impaired':
+                        received.impaired = true
+                        self.printer.print(consoleMessages.impaired, [data.identifier])
+                        ws.close()
+                        resolve()
+                        break
+                    case 'running':
+                        received.running = true
+                        self.printer.print(consoleMessages.running, [data.identifier])
+                        ws.close()
+                        resolve()
+                        break
+                    default:
+                        ws.close()
+                        resolve()
+                        break
+                }
+            }
+        })
     })
 }
 
