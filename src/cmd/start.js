@@ -5,7 +5,7 @@ const WebSocket = require('ws');
 const colors = require('colors')
 const consoleMessages = require('../lib/console-messages')
 
-var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer){
+var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig){
 
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;

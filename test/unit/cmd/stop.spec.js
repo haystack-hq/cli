@@ -49,7 +49,7 @@ describe('cmd-stop', function () {
             error: 'The stack could not be stopped.'
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         expect(cmdStart.do({})).to.be.rejectedWith('The stack could not be stopped.')
 
@@ -63,7 +63,7 @@ describe('cmd-stop', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         expect(cmdStart.parseOptions({})).to.contain({
             directory: process.cwd()
@@ -79,7 +79,7 @@ describe('cmd-stop', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         var options = {
             identifier: 'my-identifier'
@@ -96,7 +96,7 @@ describe('cmd-stop', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         expect(cmdStart.do({})).to.eventually.equal(response)
 
@@ -240,7 +240,7 @@ describe('cmd-stop', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
 
         var expected = [

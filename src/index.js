@@ -25,7 +25,7 @@ var printer = new Printer()
 const cmdFolder =__dirname + '/cmd';
 fs.readdirSync(cmdFolder).forEach(function(file) {
     var cmd = require(cmdFolder + "/" + file);
-    var c = new cmd(program, apiServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+    var c = new cmd(program, apiServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 });
 
 

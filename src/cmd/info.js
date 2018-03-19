@@ -2,17 +2,16 @@
 var Promise = require('bluebird');
 var Validator = require('../lib/validator');
 var Spinner = require('cli-spinner').Spinner;
-const WebSocket = require('ws');
 const colors = require('colors')
 const Table = require('cli-table')
+const capitalize = require('capitalize')
 
-var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer){
+var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
 
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
     this.validator = new Validator();
-    this.websocketConfig = websocketConfig
     this.printer = printer
 
     program
@@ -75,35 +74,7 @@ CmdInfo.prototype.getInfo = function (data) {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-        resolve({
-            event: 'haystack-change',
-            data: {
-                identifier: 'test',
-                services: [
-                    {
-                        name: 'web_1',
-                        status: 'running',
-                        exists: true,
-                        is_running: true,
-                        is_provisioned: false,
-                        is_healthy: false
-                    },
-                    {
-                        name: 'web_2',
-                        status: 'running',
-                        exists: true,
-                        is_running: true,
-                        is_provisioned: false,
-                        is_healthy: false
-                    }
-                ],
-                status: 'running',
-                health: 'healthy',
-                terminated_on: null
-            }
-        })
-        return
-        self.hayStackServiceAdapter.get('stacks/' + btoa(data.identifier))
+        self.hayStackServiceAdapter.get('stacks/' + Buffer.from(data.identifier).toString('base64'))
             .then(function (result) {
                 if (Object.keys(result).length) {
                     resolve(result)
@@ -135,27 +106,37 @@ CmdInfo.prototype.printInfo = function (result) {
         style: { 'padding-left': 0, 'padding-right': 0 }
     });
 
-
     // identifier
     table.push(['Identifier:', data.identifier])
     // status
-    table.push(['Status:', data.status])
+    table.push(['Status:', capitalize(data.status)])
     // health
-    table.push(['Health:', data.health])
+    table.push(['Health:', capitalize(data.health)])
     // services
     table.push(['Services:', data.services.length])
+
+    self.printer.print(table.toString())
+
     // single services
     data.services.forEach(function (service, key) {
-        table.push([service.name])
-        table.push(['', 'Status:', service.status])
+        self.printer.print(service.name + ' service:')
+
+        table = new Table({
+            chars: { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': ''
+                , 'bottom': '' , 'bottom-mid': '' , 'bottom-left': '' , 'bottom-right': ''
+                , 'left': '' , 'left-mid': '' , 'mid': '' , 'mid-mid': ''
+                , 'right': '' , 'right-mid': '' , 'middle': ' ' },
+            style: { 'padding-left': 1, 'padding-right': 0 }
+        });
+
+        table.push(['', 'Status:', capitalize(service.status)])
         table.push(['', 'Exists:', self.boolToString(service.exists)])
         table.push(['', 'Running:', self.boolToString(service.is_running)])
         table.push(['', 'Provisioned:', self.boolToString(service.is_provisioned)])
         table.push(['', 'Healthy:', self.boolToString(service.is_healthy)])
+
+        self.printer.print(table.toString())
     })
-
-
-    self.printer.print(table.toString())
 }
 
 CmdInfo.prototype.boolToString = function (bool) {

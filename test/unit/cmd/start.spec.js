@@ -49,7 +49,7 @@ describe('cmd-start', function () {
             error: 'The stack could not be launched.'
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         expect(cmdStart.do({})).to.be.rejectedWith('The stack could not be launched.')
 
@@ -63,7 +63,7 @@ describe('cmd-start', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         expect(cmdStart.parseOptions({})).to.contain({
             directory: process.cwd(),
@@ -80,7 +80,7 @@ describe('cmd-start', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         var options = {
             identifier: 'my-identifier'
@@ -98,7 +98,7 @@ describe('cmd-start', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         var options = {
             excludeMount: true
@@ -115,7 +115,7 @@ describe('cmd-start', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         expect(cmdStart.do({})).to.eventually.equal(response)
 
@@ -230,7 +230,7 @@ describe('cmd-start', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, websocketConfig, printer);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
 
         var expected = [
