@@ -127,6 +127,21 @@ describe('cmd-start', function () {
 
     })
 
+    it('should err trying yo start the stack because identifier already being used', function () {
+
+        var error = "There is already a stack with the id 'test'."
+
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            error: error
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+
+        expect(cmdStart.do({identifier: 'test'})).to.be.rejectedWith(error)
+
+    })
+
 
     it('should have current folder and mount true by default for request', function () {
 
