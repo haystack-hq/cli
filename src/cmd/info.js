@@ -5,6 +5,7 @@ var Spinner = require('cli-spinner').Spinner;
 const colors = require('colors')
 const Table = require('cli-table')
 const capitalize = require('capitalize')
+const consoleMessages = require('../lib/console-messages')
 
 var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
 
@@ -33,7 +34,13 @@ CmdInfo.prototype.action = function(cmd) {
             self.printInfo(result)
         })
         .catch(function (err){
-            self.printer.print(colors.red(err.message))
+            if (err.errno === 'ECONNREFUSED') {
+                self.printer.print(consoleMessages.haystackNotRunning)
+                self.printer.print(colors.red(err.errno + ' on port ' + err.port + '.'))
+            }
+            else {
+                self.printer.print(colors.red(err.response.data))
+            }
         });
 }
 
@@ -41,11 +48,11 @@ CmdInfo.prototype.do = function(options) {
     var self = this;
 
     return new Promise(function (resolve, reject) {
-
-        var data = self.parseOptions(options)
-
-        // start the stack
-        self.getInfo(data)
+        self.parseOptions(options)
+            .then(function (result) {
+                // start the stack
+                return self.getInfo(result)
+            })
             .then(function (result) {
                 resolve(result)
             })
@@ -56,17 +63,54 @@ CmdInfo.prototype.do = function(options) {
 }
 
 CmdInfo.prototype.parseOptions = function (options) {
-    // default data
-    var data = {
-        identifier: process.cwd()
-    }
+    var self = this
 
-    // identifier flag with string
-    if (options.identifier && typeof options.identifier === 'string') {
-        data.identifier = options.identifier
-    }
+    return new Promise(function (resolve, reject) {
+        var data = {}
 
-    return data
+        if( ! options.identifier) {
+            self.getIdentifier(process.cwd())
+                .then(function (result) {
+                    data = {
+                        identifier: result
+                    }
+
+                    resolve(data)
+                })
+                .catch(function (err) {
+                    reject(err)
+                })
+        }
+        else if (options.identifier && typeof options.identifier === 'string') {
+            data = {
+                identifier: options.identifier
+            }
+
+            resolve(data)
+        }
+    })
+}
+
+CmdInfo.prototype.getIdentifier = function (path) {
+    var self = this
+
+    return new Promise(function(resolve, reject) {
+        reject({
+            response: {
+                data: 'Not yet implemented without identifier.'
+            }
+        })
+
+        // todo: do a get on future enpoint with current path to get identifier in response
+
+        // self.hayStackServiceAdapter.get('stacks/' + Buffer.from(path).toString('base64'))
+        //     .then(function (result) {
+        //         resolve(result)
+        //     })
+        //     .catch(function (err) {
+        //         reject(err)
+        //     })
+    })
 }
 
 CmdInfo.prototype.getInfo = function (data) {
@@ -74,7 +118,7 @@ CmdInfo.prototype.getInfo = function (data) {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-        self.hayStackServiceAdapter.get('stacks/' + Buffer.from(data.identifier).toString('base64'))
+        self.hayStackServiceAdapter.get('stacks/' + data.identifier)
             .then(function (result) {
                 if (Object.keys(result).length) {
                     resolve(result)
@@ -93,7 +137,6 @@ CmdInfo.prototype.getInfo = function (data) {
 CmdInfo.prototype.printInfo = function (result) {
 
     var self = this
-    var data = result.data
 
     // title
     self.printer.print(colors.underline('Stack information'))
@@ -107,18 +150,18 @@ CmdInfo.prototype.printInfo = function (result) {
     });
 
     // identifier
-    table.push(['Identifier:', data.identifier])
+    table.push(['Identifier:', result.identifier])
     // status
-    table.push(['Status:', capitalize(data.status)])
+    table.push(['Status:', capitalize(result.status)])
     // health
-    table.push(['Health:', capitalize(data.health)])
+    table.push(['Health:', capitalize(result.health)])
     // services
-    table.push(['Services:', data.services.length])
+    table.push(['Services:', result.services.length])
 
     self.printer.print(table.toString())
 
     // single services
-    data.services.forEach(function (service, key) {
+    result.services.forEach(function (service, key) {
         self.printer.print(service.name + ' service:')
 
         table = new Table({
