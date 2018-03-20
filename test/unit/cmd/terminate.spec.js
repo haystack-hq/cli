@@ -121,28 +121,17 @@ describe('cmd-terminate', function () {
             error: 'The stack could not be stopped.'
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
-        expect(cmdStart.do({})).to.be.rejectedWith('The stack could not be stopped.')
+        var rejection = {
+            response: {
+                data: 'Not yet implemented without identifier.'
+            }
+        }
 
-    })
-
-
-    it('should have current folder by default for request', function () {
-
-        var apiAdapter = new ApiTestAdapter({
-            uri: 'stacks',
-            response: response
-        })
-        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
-
-        expect(cmdStart.parseOptions({})).to.contain({
-            directory: process.cwd()
-        })
+        expect(cmdTerminate.do({})).to.be.rejectedWith(rejection)
 
     })
-
 
     it('should have specific identifier for request', function () {
 
@@ -151,13 +140,13 @@ describe('cmd-terminate', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         var options = {
-            identifier: 'my-identifier'
+            identifier: 'my-id'
         }
 
-        expect(cmdStart.parseOptions(options)).to.contain({identifier: 'my-identifier'})
+        expect(cmdTerminate.parseOptions(options)).to.eventually.deep.equal({identifier: 'my-id'})
 
     })
 
@@ -168,9 +157,9 @@ describe('cmd-terminate', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
 
-        expect(cmdStart.do({})).to.eventually.equal(response)
+        expect(cmdTerminate.terminateStack({ identifier: 'abc' })).to.eventually.equal(response)
 
     })
 
@@ -488,7 +477,7 @@ describe('cmd-terminate', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdStart = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
 
         var expected = [
@@ -500,7 +489,7 @@ describe('cmd-terminate', function () {
             colors.green('test stack has been terminated.')
         ]
 
-        cmdStart.websocketListeningAndConsoleMessaging(response)
+        cmdTerminate.websocketListeningAndConsoleMessaging(response)
             .then(function () {
                 expect(messages).to.deep.equal(expected)
 

@@ -136,6 +136,48 @@ describe('cmd-info', function () {
         expect(cmdInfo.boolToString(false)).to.equal('No')
     })
 
+    it('should request to get the identifier via search and get empty response, err with message', function () {
+
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            response: []
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
+
+        expect(cmdInfo.parseOptions({})).to.be.rejectedWith('No stack found at this location')
+
+    })
+
+    it('should request to get the identifier via search', function () {
+
+        var searchResult = [{
+            _id: '768fdec94deb4c3fa1b2344b414f7766',
+            identifier: 'test',
+            services: [ [Object], [Object] ],
+            mode: 'local',
+            provider: 'local',
+            stack_file_location: '/Users/jaime/gosolid/haystack/haystack-agent/resources/simple-haystack-file/Haystackfile.json',
+            status: 'starting',
+            health: 'unhealthy',
+            created_by: null,
+            do_mount: false,
+            terminated_on: null,
+            haystack_file: { services: [Object] },
+            build: { identifier: 'test', objects: [Object] }
+        }]
+
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            response: searchResult
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
+
+        expect(cmdInfo.parseOptions({})).to.eventually.contain({ identifier: 'test' })
+
+    })
+
     it('should have the identifier passed as the identifier option', function () {
 
         var apiAdapter = new ApiTestAdapter({

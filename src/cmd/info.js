@@ -6,6 +6,7 @@ const colors = require('colors')
 const Table = require('cli-table')
 const capitalize = require('capitalize')
 const consoleMessages = require('../lib/console-messages')
+const StackSearch = require('../lib/stack-search')
 
 var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
 
@@ -39,7 +40,7 @@ CmdInfo.prototype.action = function(cmd) {
                 self.printer.print(colors.red(err.errno + ' on port ' + err.port + '.'))
             }
             else {
-                self.printer.print(colors.red(err.response.data))
+                self.printer.print(colors.red(err))
             }
         });
 }
@@ -69,13 +70,21 @@ CmdInfo.prototype.parseOptions = function (options) {
         var data = {}
 
         if( ! options.identifier) {
-            self.getIdentifier(process.cwd())
+            var params = {
+                stack_file_location: process.cwd()
+            }
+            StackSearch(self.hayStackServiceAdapter, params)
                 .then(function (result) {
-                    data = {
-                        identifier: result
-                    }
+                    if(result.length) {
+                        data = {
+                            identifier: result[0].identifier
+                        }
 
-                    resolve(data)
+                        resolve(data)
+                    }
+                    else {
+                        reject('No stack found at this location')
+                    }
                 })
                 .catch(function (err) {
                     reject(err)
@@ -88,28 +97,6 @@ CmdInfo.prototype.parseOptions = function (options) {
 
             resolve(data)
         }
-    })
-}
-
-CmdInfo.prototype.getIdentifier = function (path) {
-    var self = this
-
-    return new Promise(function(resolve, reject) {
-        reject({
-            response: {
-                data: 'Not yet implemented without identifier.'
-            }
-        })
-
-        // todo: do a get on future enpoint with current path to get identifier in response
-
-        // self.hayStackServiceAdapter.get('stacks/' + Buffer.from(path).toString('base64'))
-        //     .then(function (result) {
-        //         resolve(result)
-        //     })
-        //     .catch(function (err) {
-        //         reject(err)
-        //     })
     })
 }
 

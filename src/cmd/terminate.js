@@ -4,6 +4,7 @@ var Validator = require('../lib/validator');
 const WebSocket = require('ws');
 const colors = require('colors')
 const consoleMessages = require('../lib/console-messages')
+const StackSearch = require('../lib/stack-search')
 
 var CmdTerminate = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig){
 
@@ -35,7 +36,7 @@ CmdTerminate.prototype.action = function(cmd) {
                 .catch(function () {})
         })
         .catch(function (err){
-            self.printer.print(colors.red(err.message))
+            self.printer.print(colors.red(err.response.data))
         });
 
 }
@@ -44,11 +45,11 @@ CmdTerminate.prototype.do = function(options) {
     var self = this;
 
     return new Promise(function (resolve, reject) {
-
-        var data = self.parseOptions(options)
-
-        // start the stack
-        self.terminateStack(data)
+        self.parseOptions(options)
+            .then(function (result) {
+                // terminate the stack
+                return self.terminateStack(result)
+            })
             .then(function (result) {
                 resolve(result)
             })
@@ -59,17 +60,35 @@ CmdTerminate.prototype.do = function(options) {
 }
 
 CmdTerminate.prototype.parseOptions = function (options) {
-    // default data
-    var data = {
-        directory: process.cwd()
-    }
+    var self = this
 
-    // identifier flag with string
-    if (options.identifier && typeof options.identifier === 'string') {
-        data.identifier = options.identifier
-    }
+    return new Promise(function (resolve, reject) {
+        var data = {}
 
-    return data
+        if( ! options.identifier) {
+            var params = {
+                stack_file_location: process.cwd()
+            }
+            StackSearch(self.hayStackServiceAdapter, params)
+                .then(function (result) {
+                    data = {
+                        identifier: result
+                    }
+
+                    resolve(data)
+                })
+                .catch(function (err) {
+                    reject(err)
+                })
+        }
+        else if (options.identifier && typeof options.identifier === 'string') {
+            data = {
+                identifier: options.identifier
+            }
+
+            resolve(data)
+        }
+    })
 }
 
 CmdTerminate.prototype.terminateStack = function (data) {
@@ -77,7 +96,7 @@ CmdTerminate.prototype.terminateStack = function (data) {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-        self.hayStackServiceAdapter.delete('stacks', data)
+        self.hayStackServiceAdapter.delete('stacks/' + data.identifier)
             .then(function (result) {
                 if (Object.keys(result).length) {
                     resolve(result)
