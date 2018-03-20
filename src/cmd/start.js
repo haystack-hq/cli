@@ -62,7 +62,7 @@ CmdStart.prototype.do = function(options) {
 CmdStart.prototype.parseOptions = function (options) {
     // default data
     var data = {
-        directory: process.cwd(),
+        stack_file_location: process.cwd(),
         mount: true
     }
 

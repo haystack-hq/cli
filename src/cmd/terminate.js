@@ -71,11 +71,16 @@ CmdTerminate.prototype.parseOptions = function (options) {
             }
             StackSearch(self.hayStackServiceAdapter, params)
                 .then(function (result) {
-                    data = {
-                        identifier: result
-                    }
+                    if(result.length) {
+                        data = {
+                            identifier: result[0].identifier
+                        }
 
-                    resolve(data)
+                        resolve(data)
+                    }
+                    else {
+                        reject('No stack found at this location')
+                    }
                 })
                 .catch(function (err) {
                     reject(err)

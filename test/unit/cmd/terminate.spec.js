@@ -114,22 +114,43 @@ describe('cmd-terminate', function () {
     }
     var websocketConfig = { uri: 'ws://127.0.0.1:3111/stacks/stream' }
 
-    it('should err trying to stop the stack', function () {
+    it('should find identifier via search', function () {
 
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
-            error: 'The stack could not be stopped.'
+            response: [{
+                _id: '768fdec94deb4c3fa1b2344b414f7766',
+                identifier: 'test',
+                services: [ [Object], [Object] ],
+                mode: 'local',
+                provider: 'local',
+                stack_file_location: '/Users/jaime/gosolid/haystack/haystack-agent/resources/simple-haystack-file/Haystackfile.json',
+                status: 'starting',
+                health: 'unhealthy',
+                created_by: null,
+                do_mount: false,
+                terminated_on: null,
+                haystack_file: { services: [Object] },
+                build: { identifier: 'test', objects: [Object] }
+            }]
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
         var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
-        var rejection = {
-            response: {
-                data: 'Not yet implemented without identifier.'
-            }
-        }
+        expect(cmdTerminate.parseOptions({})).to.eventually.contain({ identifier: 'test' })
 
-        expect(cmdTerminate.do({})).to.be.rejectedWith(rejection)
+    })
+
+    it('should err trying to stop the stack', function () {
+
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            error: 'The stack could not be terminated.'
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+
+        expect(cmdTerminate.do({identifier: 'my-id'})).to.eventually.be.rejectedWith('The stack could not be terminated.')
 
     })
 

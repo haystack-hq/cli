@@ -6,7 +6,7 @@ var expect = chai.expect;
 
 describe('stack search', function () {
 
-    it('responds with empty result', function () {
+    it('responds with empty array when nothing found', function () {
 
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',

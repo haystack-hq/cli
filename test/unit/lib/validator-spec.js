@@ -19,7 +19,7 @@ describe('validator-required', function() {
     });
 
     it("should return a message if a value is not provided", function () {
-        assert(validator.required('') == 'required');
+        assert(validator.required('') === 'required');
     });
 
 

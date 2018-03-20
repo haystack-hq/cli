@@ -138,7 +138,7 @@ describe('cmd-start', function () {
         var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         expect(cmdStart.parseOptions({})).to.contain({
-            directory: process.cwd(),
+            stack_file_location: process.cwd(),
             mount: true
         })
 
