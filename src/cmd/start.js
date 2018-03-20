@@ -90,7 +90,7 @@ CmdStart.prototype.startStack = function (data) {
                     resolve(result)
                 }
                 else {
-                    reject({ message: consoleMessages.noAgent })
+                    reject({ message: consoleMessages.haystackNotRunning })
                 }
             })
             .catch(function (err) {
@@ -111,7 +111,7 @@ CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
         var error = false
 
         ws.on('error', function (err) {
-            self.printer.print(colors.red(consoleMessages.noAgent))
+            self.printer.print(consoleMessages.haystackNotRunning)
 
             ws.close()
 
@@ -124,45 +124,38 @@ CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
             reject()
         }
 
-        var received = { services: {} }
+        var receivedServices = {}
         result.services.forEach(function (service) {
-            received.services[service.name] = service.status
+            receivedServices[service.name] = service.status
         })
 
         self.printer.print(consoleMessages.starting, [result.identifier])
 
         ws.on('message', function incoming(m) {
             var message = JSON.parse(m)
-            var event = message.event
-            var data = message.data
 
-            if (data.identifier === result.identifier)
+            if (message.identifier === result.identifier)
             {
                 // print services' updates
-                data.services.forEach(function (service) {
-                    if(received.services[service.name] !== service.status) {
-                        received.services[service.name] = service.status
+                message.services.forEach(function (service) {
+                    if(receivedServices[service.name] !== service.status) {
+                        receivedServices[service.name] = service.status
                         self.printer.print(consoleMessages.serviceIs, [service.name, service.status])
                     }
                 })
 
                 // switch between statuses for output messages
-                switch(data.status) {
+                switch(message.status) {
+                    case 'starting':
                     case 'provisioning':
-                        if ( ! received.provisioning) {
-                            received.provisioning = true
-                            self.printer.print(consoleMessages.provisioning, [data.identifier])
-                        }
                         break
                     case 'impaired':
-                        received.impaired = true
-                        self.printer.print(consoleMessages.impaired, [data.identifier])
+                        self.printer.print(consoleMessages.impaired, [message.identifier])
                         ws.close()
                         resolve()
                         break
                     case 'running':
-                        received.running = true
-                        self.printer.print(consoleMessages.running, [data.identifier])
+                        self.printer.print(consoleMessages.running, [message.identifier])
                         ws.close()
                         resolve()
                         break

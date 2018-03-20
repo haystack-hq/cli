@@ -1,15 +1,16 @@
 #! /usr/bin/env node
 var Promise = require('bluebird');
-var Validator = require('../lib/validator');
 var Table = require('cli-table')
+var colors = require('colors')
+var consoleMessages = require('../lib/console-messages')
 
 
-var CmdList = function(program, hayStackServiceAdapter, cmdPromptAdapter){
+var CmdList = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
 
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
-    this.validator = new Validator();
+    this.printer = printer
 
     program
         .command('list')
@@ -23,13 +24,20 @@ var CmdList = function(program, hayStackServiceAdapter, cmdPromptAdapter){
 }
 
 CmdList.prototype.action = function(cmd) {
+    var self = this
 
     this.do(cmd)
         .then(function (result) {
-            console.log(result);
+            self.printer.print(result);
         })
         .catch(function (err){
-            console.log(err)
+            if (err.errno === 'ECONNREFUSED') {
+                self.printer.print(consoleMessages.haystackNotRunning)
+                self.printer.print(colors.red(err.errno + ' on port ' + err.port + '.'))
+            }
+            else {
+                self.printer.print(colors.red(err))
+            }
         });
 
 }
@@ -40,7 +48,7 @@ CmdList.prototype.do = function(options) {
     var table = new Table({
         head: ['identifier', 'provider', 'status', 'health'],
         style: {
-            head: ['blue']
+            head: ['bold']
         }
     })
 

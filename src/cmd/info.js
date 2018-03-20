@@ -80,7 +80,7 @@ CmdInfo.prototype.getInfo = function (data) {
                     resolve(result)
                 }
                 else {
-                    reject({ message: consoleMessages.noAgent })
+                    reject({ message: consoleMessages.haystackNotRunning })
                 }
             })
             .catch(function (err) {

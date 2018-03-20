@@ -1,12 +1,11 @@
 #! /usr/bin/env node
 var Promise = require('bluebird');
 var Validator = require('../lib/validator');
-var Spinner = require('cli-spinner').Spinner;
 const WebSocket = require('ws');
 const colors = require('colors')
 const consoleMessages = require('../lib/console-messages')
 
-var CmdStop = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig){
+var CmdTerminate = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig){
 
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
@@ -16,8 +15,8 @@ var CmdStop = function(program, hayStackServiceAdapter, cmdPromptAdapter, printe
     this.printer = printer
 
     program
-        .command('stop')
-        .description('Stop a stack')
+        .command('terminate')
+        .description('Terminate a stack')
         .option('-i, --identifier <name>', 'name of stack. If omitted, the stack from the current folder will be used')
         .action(function (cmd) {
             self.action(cmd)
@@ -25,7 +24,7 @@ var CmdStop = function(program, hayStackServiceAdapter, cmdPromptAdapter, printe
 
 }
 
-CmdStop.prototype.action = function(cmd) {
+CmdTerminate.prototype.action = function(cmd) {
 
     var self = this
 
@@ -41,7 +40,7 @@ CmdStop.prototype.action = function(cmd) {
 
 }
 
-CmdStop.prototype.do = function(options) {
+CmdTerminate.prototype.do = function(options) {
     var self = this;
 
     return new Promise(function (resolve, reject) {
@@ -49,7 +48,7 @@ CmdStop.prototype.do = function(options) {
         var data = self.parseOptions(options)
 
         // start the stack
-        self.stopStack(data)
+        self.terminateStack(data)
             .then(function (result) {
                 resolve(result)
             })
@@ -59,7 +58,7 @@ CmdStop.prototype.do = function(options) {
     })
 }
 
-CmdStop.prototype.parseOptions = function (options) {
+CmdTerminate.prototype.parseOptions = function (options) {
     // default data
     var data = {
         directory: process.cwd()
@@ -73,7 +72,7 @@ CmdStop.prototype.parseOptions = function (options) {
     return data
 }
 
-CmdStop.prototype.stopStack = function (data) {
+CmdTerminate.prototype.terminateStack = function (data) {
 
     var self = this;
 
@@ -84,7 +83,7 @@ CmdStop.prototype.stopStack = function (data) {
                     resolve(result)
                 }
                 else {
-                    reject({ message: consoleMessages.noAgent })
+                    reject({ message: consoleMessages.haystackNotRunning })
                 }
             })
             .catch(function (err) {
@@ -94,7 +93,7 @@ CmdStop.prototype.stopStack = function (data) {
 
 }
 
-CmdStop.prototype.websocketListeningAndConsoleMessaging = function (result) {
+CmdTerminate.prototype.websocketListeningAndConsoleMessaging = function (result) {
 
     var self = this
 
@@ -105,7 +104,7 @@ CmdStop.prototype.websocketListeningAndConsoleMessaging = function (result) {
         var error = false
 
         ws.on('error', function (err) {
-            self.printer.print(colors.red(consoleMessages.noAgent))
+            self.printer.print(colors.red(consoleMessages.haystackNotRunning))
 
             ws.close()
 
@@ -119,42 +118,32 @@ CmdStop.prototype.websocketListeningAndConsoleMessaging = function (result) {
             return
         }
 
-        var received = {
-            stopping: true,
-            services: {}
-        }
+        var receivedServices = {}
         result.services.forEach(function (service) {
-            received.services[service.name] = service.status
+            receivedServices[service.name] = service.status
         })
 
-        self.printer.print(consoleMessages.stopping, [result.identifier])
+        self.printer.print(consoleMessages.terminating, [result.identifier])
 
         ws.on('message', function incoming(m) {
             var message = JSON.parse(m)
-            var event = message.event
-            var data = message.data
 
-            if (data.identifier === result.identifier)
+            if (message.identifier === result.identifier)
             {
                 // print services' updates
-                data.services.forEach(function (service) {
-                    if(received.services[service.name] !== service.status) {
-                        received.services[service.name] = service.status
+                message.services.forEach(function (service) {
+                    if(receivedServices[service.name] !== service.status) {
+                        receivedServices[service.name] = service.status
                         self.printer.print(consoleMessages.serviceIs, [service.name, service.status])
                     }
                 })
 
                 // switch between statuses for output messages
-                switch(data.status) {
-                    case 'stopping':
-                        if ( ! received.stopping) {
-                            received.stopping = true
-                            self.printer.print(consoleMessages.stopping, [data.identifier])
-                        }
+                switch(message.status) {
+                    case 'terminating':
                         break
-                    case 'stopped':
-                        received.running = true
-                        self.printer.print(consoleMessages.stopped, [data.identifier])
+                    case 'terminated':
+                        self.printer.print(consoleMessages.terminated, [message.identifier])
                         ws.close()
                         resolve()
                         break
@@ -168,4 +157,4 @@ CmdStop.prototype.websocketListeningAndConsoleMessaging = function (result) {
     })
 }
 
-module.exports = CmdStop;
+module.exports = CmdTerminate;
