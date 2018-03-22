@@ -3,7 +3,7 @@ var Promise = require('bluebird');
 var Table = require('cli-table')
 var colors = require('colors')
 var consoleMessages = require('../lib/console-messages')
-
+const GracefulErrorHandler = require('../lib/graceful-error-handler')
 
 var CmdList = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
 
@@ -31,15 +31,11 @@ CmdList.prototype.action = function(cmd) {
             self.printer.print(result);
         })
         .catch(function (err){
-            if (err.errno === 'ECONNREFUSED') {
-                self.printer.print(consoleMessages.haystackNotRunning)
-                self.printer.print(colors.red(err.errno + ' on port ' + err.port + '.'))
-            }
-            else if (err.errno === 'no-stacks') {
+            if (err.errno === 'no-stacks') {
                 self.printer.print(err.message)
             }
             else {
-                self.printer.print(colors.red(err))
+                GracefulErrorHandler(self.printer, err)
             }
         });
 

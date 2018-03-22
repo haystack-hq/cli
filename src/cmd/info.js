@@ -7,6 +7,7 @@ const Table = require('cli-table')
 const capitalize = require('capitalize')
 const consoleMessages = require('../lib/console-messages')
 const StackSearch = require('../lib/stack-search')
+const GracefulErrorHandler = require('../lib/graceful-error-handler')
 
 var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
 
@@ -35,16 +36,7 @@ CmdInfo.prototype.action = function(cmd) {
             self.printInfo(result)
         })
         .catch(function (err){
-            if (err.errno === 'ECONNREFUSED') {
-                self.printer.print(consoleMessages.haystackNotRunning)
-                self.printer.print(colors.red(err.errno + ' on port ' + err.port + '.'))
-            }
-            else if (err.response && err.response.data) {
-                self.printer.print(colors.red(err.response.data))
-            }
-            else {
-                self.printer.print(colors.red(err))
-            }
+            GracefulErrorHandler(self.printer, err)
         });
 }
 
