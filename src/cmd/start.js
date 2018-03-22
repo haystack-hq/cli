@@ -40,6 +40,9 @@ CmdStart.prototype.action = function(cmd) {
                 self.printer.print(consoleMessages.haystackNotRunning)
                 self.printer.print(colors.red(err.errno + ' on port ' + err.port + '.'))
             }
+            else if (err.response && err.response.data) {
+                self.printer.print(colors.red(err.response.data))
+            }
             else {
                 self.printer.print(colors.red(err))
             }
