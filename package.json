@@ -38,6 +38,7 @@
     "capitalize": "^1.0.0",
     "cli-spinner": "^0.2.8",
     "cli-table": "^0.3.1",
+    "executive": "^1.5.12",
     "ws": "^5.0.0"
   }
 }
