@@ -127,9 +127,9 @@ List all your running stacks.
 
 
 ```
-$ hs list -h
+$ hs list --help
 
-Usage: list|ls
+  Usage: list|ls
 
   List active stacks
 
@@ -141,7 +141,25 @@ Usage: list|ls
 
 ---
 
+## info
+
+```
+$ hs info --help
+
+  Usage: info [options]
+
+  Information about stack
+
+
+  Options:
+
+    -i, --identifier <name>  name of stack. If omitted, the stack from the current folder will be used
+    -h, --help               output usage information
+```
+
 ## stack ssh
+
+---
 
 SSH into one of the nodes within the stack.
 
@@ -201,22 +219,21 @@ Usage: log [options]
 
 ---
 
-## stack remove
+## terminate
 
 
 ```
-$ hs stack remove
+$ hs terminate --help
 
-Usage: log [options] or rm [options]
+  Usage: terminate|rm [options]
 
-  Stop and remove a stack. 
-
-  Note: This can not be undone. No files from your mounts will be removed, you will need to remove them manually.
+  Terminate a stack
 
 
   Options:
-    -i, --identifier [value]	The stack identifier. If omitted the stack in the current directory will be used
-    -h, --help 					Print usage information
+
+    -i, --identifier <name>  name of stack. If omitted, the stack from the current folder will be used
+    -h, --help               output usage information
 
 ```
 

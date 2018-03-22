@@ -36,8 +36,13 @@ CmdStart.prototype.action = function(cmd) {
                 .catch(function () {})
         })
         .catch(function (err){
-            console.log(err)
-            self.printer.print(colors.red(err.message))
+            if (err.errno === 'ECONNREFUSED') {
+                self.printer.print(consoleMessages.haystackNotRunning)
+                self.printer.print(colors.red(err.errno + ' on port ' + err.port + '.'))
+            }
+            else {
+                self.printer.print(colors.red(err))
+            }
         });
 
 }
@@ -63,9 +68,9 @@ CmdStart.prototype.do = function(options) {
 CmdStart.prototype.parseOptions = function (options) {
     // default data
     var data = {
-        // todo: remove the hardcoded Haystackfile.json
+        // todo: remove the hardcoded file once the agent can grab it on its own
         stack_file_location: process.cwd() + '/Haystackfile.json',
-        // mount: true,
+        mount: true,
         provider: 'local'
     }
 
@@ -114,7 +119,7 @@ CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
         var error = false
 
         ws.on('error', function (err) {
-            self.printer.print(consoleMessages.haystackNotRunning)
+            // self.printer.print(consoleMessages.haystackNotRunning)
 
             ws.close()
 

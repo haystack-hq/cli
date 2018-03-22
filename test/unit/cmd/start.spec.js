@@ -153,7 +153,8 @@ describe('cmd-start', function () {
         var cmdStart = new CmdStart(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         expect(cmdStart.parseOptions({})).to.contain({
-            stack_file_location: process.cwd(),
+            // todo: remove the hardcoded file once the agent can grab it on its own
+            stack_file_location: process.cwd() + '/Haystackfile.json',
             mount: true
         })
 
@@ -214,481 +215,496 @@ describe('cmd-start', function () {
 
         // messages
         var message1 = {
-            "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
-            "identifier": "test",
-            "services": [
-                {
-                    "name": "web_1",
-                    "status": "pending",
-                    "exists": false,
-                    "is_running": false,
-                    "is_provisioned": false,
-                    "is_healthy": false
-                },
-                {
-                    "name": "web_2",
-                    "status": "pending",
-                    "exists": false,
-                    "is_running": false,
-                    "is_provisioned": false,
-                    "is_healthy": false
-                }
-            ],
-            "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
-            "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
-            "mode": "local",
-            "provider": "local",
-            "stack_file_location": null,
-            "status": "starting",
-            "health": "unhealthy",
-            "created_by": null,
-            "do_mount": false,
-            "terminated_on": null,
-            "haystack_file": {
-                "variables": [
+            event: 'haystack-event',
+            data: {
+                "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
+                "identifier": "test",
+                "services": [
                     {
-                        "key": "value"
+                        "name": "web_1",
+                        "status": "pending",
+                        "exists": false,
+                        "is_running": false,
+                        "is_provisioned": false,
+                        "is_healthy": false
                     },
                     {
-                        "key": {
-                            "childkey": "childvalue"
-                        }
+                        "name": "web_2",
+                        "status": "pending",
+                        "exists": false,
+                        "is_running": false,
+                        "is_provisioned": false,
+                        "is_healthy": false
                     }
                 ],
-                "services": {
-                    "web_1": {
-                        "type": "docker.image",
-                        "image": "hello-world"
-                    },
-                    "web_2": {
-                        "type": "docker.build",
-                        "src": "."
-                    }
-                }
-            },
-            "build": {
-                "identifier": "test-stack",
-                "objects": {
-                    "builds": [
+                "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
+                "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
+                "mode": "local",
+                "provider": "local",
+                "stack_file_location": null,
+                "status": "starting",
+                "health": "unhealthy",
+                "created_by": null,
+                "do_mount": false,
+                "terminated_on": null,
+                "haystack_file": {
+                    "variables": [
                         {
-                            "image": "test-build-image",
-                            "tag": "test-with-custom-image"
-                        }
-                    ],
-                    "images": [
-                        {
-                            "name": "tutum/hello-world"
-                        }
-                    ],
-                    "containers": [
-                        {
-                            "image": "tutum/hello-world",
-                            "name": "web_1",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4454"
-                                }
-                            ]
+                            "key": "value"
                         },
                         {
-                            "image": "tutum/hello-world",
-                            "name": "web_2",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4455"
-                                }
-                            ]
+                            "key": {
+                                "childkey": "childvalue"
+                            }
                         }
                     ],
-                    "networks": []
+                    "services": {
+                        "web_1": {
+                            "type": "docker.image",
+                            "image": "hello-world"
+                        },
+                        "web_2": {
+                            "type": "docker.build",
+                            "src": "."
+                        }
+                    }
+                },
+                "build": {
+                    "identifier": "test-stack",
+                    "objects": {
+                        "builds": [
+                            {
+                                "image": "test-build-image",
+                                "tag": "test-with-custom-image"
+                            }
+                        ],
+                        "images": [
+                            {
+                                "name": "tutum/hello-world"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_1",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4454"
+                                    }
+                                ]
+                            },
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_2",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4455"
+                                    }
+                                ]
+                            }
+                        ],
+                        "networks": []
+                    }
                 }
             }
         }
 
         var message2 = {
-            "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
-            "identifier": "test",
-            "services": [
-                {
-                    "name": "web_1",
-                    "status": "provisioning",
-                    "exists": false,
-                    "is_running": false,
-                    "is_provisioned": false,
-                    "is_healthy": false
-                },
-                {
-                    "name": "web_2",
-                    "status": "pending",
-                    "exists": false,
-                    "is_running": false,
-                    "is_provisioned": false,
-                    "is_healthy": false
-                }
-            ],
-            "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
-            "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
-            "mode": "local",
-            "provider": "local",
-            "stack_file_location": null,
-            "status": "provisioning",
-            "health": "unhealthy",
-            "created_by": null,
-            "do_mount": false,
-            "terminated_on": null,
-            "haystack_file": {
-                "variables": [
+            event: 'haystack-event',
+            data: {
+                "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
+                "identifier": "test",
+                "services": [
                     {
-                        "key": "value"
+                        "name": "web_1",
+                        "status": "provisioning",
+                        "exists": false,
+                        "is_running": false,
+                        "is_provisioned": false,
+                        "is_healthy": false
                     },
                     {
-                        "key": {
-                            "childkey": "childvalue"
-                        }
+                        "name": "web_2",
+                        "status": "pending",
+                        "exists": false,
+                        "is_running": false,
+                        "is_provisioned": false,
+                        "is_healthy": false
                     }
                 ],
-                "services": {
-                    "web_1": {
-                        "type": "docker.image",
-                        "image": "hello-world"
-                    },
-                    "web_2": {
-                        "type": "docker.build",
-                        "src": "."
-                    }
-                }
-            },
-            "build": {
-                "identifier": "test-stack",
-                "objects": {
-                    "builds": [
+                "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
+                "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
+                "mode": "local",
+                "provider": "local",
+                "stack_file_location": null,
+                "status": "provisioning",
+                "health": "unhealthy",
+                "created_by": null,
+                "do_mount": false,
+                "terminated_on": null,
+                "haystack_file": {
+                    "variables": [
                         {
-                            "image": "test-build-image",
-                            "tag": "test-with-custom-image"
-                        }
-                    ],
-                    "images": [
-                        {
-                            "name": "tutum/hello-world"
-                        }
-                    ],
-                    "containers": [
-                        {
-                            "image": "tutum/hello-world",
-                            "name": "web_1",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4454"
-                                }
-                            ]
+                            "key": "value"
                         },
                         {
-                            "image": "tutum/hello-world",
-                            "name": "web_2",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4455"
-                                }
-                            ]
+                            "key": {
+                                "childkey": "childvalue"
+                            }
                         }
                     ],
-                    "networks": []
+                    "services": {
+                        "web_1": {
+                            "type": "docker.image",
+                            "image": "hello-world"
+                        },
+                        "web_2": {
+                            "type": "docker.build",
+                            "src": "."
+                        }
+                    }
+                },
+                "build": {
+                    "identifier": "test-stack",
+                    "objects": {
+                        "builds": [
+                            {
+                                "image": "test-build-image",
+                                "tag": "test-with-custom-image"
+                            }
+                        ],
+                        "images": [
+                            {
+                                "name": "tutum/hello-world"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_1",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4454"
+                                    }
+                                ]
+                            },
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_2",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4455"
+                                    }
+                                ]
+                            }
+                        ],
+                        "networks": []
+                    }
                 }
             }
         }
 
         var message3 = {
-            "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
-            "identifier": "test",
-            "services": [
-                {
-                    "name": "web_1",
-                    "status": "provisioning",
-                    "exists": false,
-                    "is_running": false,
-                    "is_provisioned": false,
-                    "is_healthy": false
-                },
-                {
-                    "name": "web_2",
-                    "status": "provisioning",
-                    "exists": false,
-                    "is_running": false,
-                    "is_provisioned": false,
-                    "is_healthy": false
-                }
-            ],
-            "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
-            "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
-            "mode": "local",
-            "provider": "local",
-            "stack_file_location": null,
-            "status": "provisioning",
-            "health": "unhealthy",
-            "created_by": null,
-            "do_mount": false,
-            "terminated_on": null,
-            "haystack_file": {
-                "variables": [
+            event: 'haystack-event',
+            data: {
+                "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
+                "identifier": "test",
+                "services": [
                     {
-                        "key": "value"
+                        "name": "web_1",
+                        "status": "provisioning",
+                        "exists": false,
+                        "is_running": false,
+                        "is_provisioned": false,
+                        "is_healthy": false
                     },
                     {
-                        "key": {
-                            "childkey": "childvalue"
-                        }
+                        "name": "web_2",
+                        "status": "provisioning",
+                        "exists": false,
+                        "is_running": false,
+                        "is_provisioned": false,
+                        "is_healthy": false
                     }
                 ],
-                "services": {
-                    "web_1": {
-                        "type": "docker.image",
-                        "image": "hello-world"
-                    },
-                    "web_2": {
-                        "type": "docker.build",
-                        "src": "."
-                    }
-                }
-            },
-            "build": {
-                "identifier": "test-stack",
-                "objects": {
-                    "builds": [
+                "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
+                "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
+                "mode": "local",
+                "provider": "local",
+                "stack_file_location": null,
+                "status": "provisioning",
+                "health": "unhealthy",
+                "created_by": null,
+                "do_mount": false,
+                "terminated_on": null,
+                "haystack_file": {
+                    "variables": [
                         {
-                            "image": "test-build-image",
-                            "tag": "test-with-custom-image"
-                        }
-                    ],
-                    "images": [
-                        {
-                            "name": "tutum/hello-world"
-                        }
-                    ],
-                    "containers": [
-                        {
-                            "image": "tutum/hello-world",
-                            "name": "web_1",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4454"
-                                }
-                            ]
+                            "key": "value"
                         },
                         {
-                            "image": "tutum/hello-world",
-                            "name": "web_2",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4455"
-                                }
-                            ]
+                            "key": {
+                                "childkey": "childvalue"
+                            }
                         }
                     ],
-                    "networks": []
+                    "services": {
+                        "web_1": {
+                            "type": "docker.image",
+                            "image": "hello-world"
+                        },
+                        "web_2": {
+                            "type": "docker.build",
+                            "src": "."
+                        }
+                    }
+                },
+                "build": {
+                    "identifier": "test-stack",
+                    "objects": {
+                        "builds": [
+                            {
+                                "image": "test-build-image",
+                                "tag": "test-with-custom-image"
+                            }
+                        ],
+                        "images": [
+                            {
+                                "name": "tutum/hello-world"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_1",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4454"
+                                    }
+                                ]
+                            },
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_2",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4455"
+                                    }
+                                ]
+                            }
+                        ],
+                        "networks": []
+                    }
                 }
             }
         }
 
         var message4 = {
-            "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
-            "identifier": "test",
-            "services": [
-                {
-                    "name": "web_1",
-                    "status": "running",
-                    "exists": true,
-                    "is_running": true,
-                    "is_provisioned": true,
-                    "is_healthy": true
-                },
-                {
-                    "name": "web_2",
-                    "status": "provisioning",
-                    "exists": false,
-                    "is_running": false,
-                    "is_provisioned": false,
-                    "is_healthy": false
-                }
-            ],
-            "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
-            "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
-            "mode": "local",
-            "provider": "local",
-            "stack_file_location": null,
-            "status": "provisioning",
-            "health": "unhealthy",
-            "created_by": null,
-            "do_mount": false,
-            "terminated_on": null,
-            "haystack_file": {
-                "variables": [
+            event: 'haystack-event',
+            data: {
+                "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
+                "identifier": "test",
+                "services": [
                     {
-                        "key": "value"
+                        "name": "web_1",
+                        "status": "running",
+                        "exists": true,
+                        "is_running": true,
+                        "is_provisioned": true,
+                        "is_healthy": true
                     },
                     {
-                        "key": {
-                            "childkey": "childvalue"
-                        }
+                        "name": "web_2",
+                        "status": "provisioning",
+                        "exists": false,
+                        "is_running": false,
+                        "is_provisioned": false,
+                        "is_healthy": false
                     }
                 ],
-                "services": {
-                    "web_1": {
-                        "type": "docker.image",
-                        "image": "hello-world"
-                    },
-                    "web_2": {
-                        "type": "docker.build",
-                        "src": "."
-                    }
-                }
-            },
-            "build": {
-                "identifier": "test-stack",
-                "objects": {
-                    "builds": [
+                "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
+                "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
+                "mode": "local",
+                "provider": "local",
+                "stack_file_location": null,
+                "status": "provisioning",
+                "health": "unhealthy",
+                "created_by": null,
+                "do_mount": false,
+                "terminated_on": null,
+                "haystack_file": {
+                    "variables": [
                         {
-                            "image": "test-build-image",
-                            "tag": "test-with-custom-image"
-                        }
-                    ],
-                    "images": [
-                        {
-                            "name": "tutum/hello-world"
-                        }
-                    ],
-                    "containers": [
-                        {
-                            "image": "tutum/hello-world",
-                            "name": "web_1",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4454"
-                                }
-                            ]
+                            "key": "value"
                         },
                         {
-                            "image": "tutum/hello-world",
-                            "name": "web_2",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4455"
-                                }
-                            ]
+                            "key": {
+                                "childkey": "childvalue"
+                            }
                         }
                     ],
-                    "networks": []
+                    "services": {
+                        "web_1": {
+                            "type": "docker.image",
+                            "image": "hello-world"
+                        },
+                        "web_2": {
+                            "type": "docker.build",
+                            "src": "."
+                        }
+                    }
+                },
+                "build": {
+                    "identifier": "test-stack",
+                    "objects": {
+                        "builds": [
+                            {
+                                "image": "test-build-image",
+                                "tag": "test-with-custom-image"
+                            }
+                        ],
+                        "images": [
+                            {
+                                "name": "tutum/hello-world"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_1",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4454"
+                                    }
+                                ]
+                            },
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_2",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4455"
+                                    }
+                                ]
+                            }
+                        ],
+                        "networks": []
+                    }
                 }
             }
         }
 
         var message5 = {
-            "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
-            "identifier": "test",
-            "services": [
-                {
-                    "name": "web_1",
-                    "status": "running",
-                    "exists": true,
-                    "is_running": true,
-                    "is_provisioned": true,
-                    "is_healthy": true
-                },
-                {
-                    "name": "web_2",
-                    "status": "running",
-                    "exists": true,
-                    "is_running": true,
-                    "is_provisioned": true,
-                    "is_healthy": true
-                }
-            ],
-            "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
-            "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
-            "mode": "local",
-            "provider": "local",
-            "stack_file_location": null,
-            "status": "running",
-            "health": "healthy",
-            "created_by": null,
-            "do_mount": false,
-            "terminated_on": null,
-            "haystack_file": {
-                "variables": [
+            event: 'haystack-event',
+            data: {
+                "_id": "ecd7ba4c5f994baf8af0bccf8763147d",
+                "identifier": "test",
+                "services": [
                     {
-                        "key": "value"
+                        "name": "web_1",
+                        "status": "running",
+                        "exists": true,
+                        "is_running": true,
+                        "is_provisioned": true,
+                        "is_healthy": true
                     },
                     {
-                        "key": {
-                            "childkey": "childvalue"
-                        }
+                        "name": "web_2",
+                        "status": "running",
+                        "exists": true,
+                        "is_running": true,
+                        "is_provisioned": true,
+                        "is_healthy": true
                     }
                 ],
-                "services": {
-                    "web_1": {
-                        "type": "docker.image",
-                        "image": "hello-world"
-                    },
-                    "web_2": {
-                        "type": "docker.build",
-                        "src": "."
-                    }
-                }
-            },
-            "build": {
-                "identifier": "test-stack",
-                "objects": {
-                    "builds": [
+                "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
+                "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
+                "mode": "local",
+                "provider": "local",
+                "stack_file_location": null,
+                "status": "running",
+                "health": "healthy",
+                "created_by": null,
+                "do_mount": false,
+                "terminated_on": null,
+                "haystack_file": {
+                    "variables": [
                         {
-                            "image": "test-build-image",
-                            "tag": "test-with-custom-image"
-                        }
-                    ],
-                    "images": [
-                        {
-                            "name": "tutum/hello-world"
-                        }
-                    ],
-                    "containers": [
-                        {
-                            "image": "tutum/hello-world",
-                            "name": "web_1",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4454"
-                                }
-                            ]
+                            "key": "value"
                         },
                         {
-                            "image": "tutum/hello-world",
-                            "name": "web_2",
-                            "detach": true,
-                            "ports": [
-                                {
-                                    "container": "80",
-                                    "host": "4455"
-                                }
-                            ]
+                            "key": {
+                                "childkey": "childvalue"
+                            }
                         }
                     ],
-                    "networks": []
+                    "services": {
+                        "web_1": {
+                            "type": "docker.image",
+                            "image": "hello-world"
+                        },
+                        "web_2": {
+                            "type": "docker.build",
+                            "src": "."
+                        }
+                    }
+                },
+                "build": {
+                    "identifier": "test-stack",
+                    "objects": {
+                        "builds": [
+                            {
+                                "image": "test-build-image",
+                                "tag": "test-with-custom-image"
+                            }
+                        ],
+                        "images": [
+                            {
+                                "name": "tutum/hello-world"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_1",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4454"
+                                    }
+                                ]
+                            },
+                            {
+                                "image": "tutum/hello-world",
+                                "name": "web_2",
+                                "detach": true,
+                                "ports": [
+                                    {
+                                        "container": "80",
+                                        "host": "4455"
+                                    }
+                                ]
+                            }
+                        ],
+                        "networks": []
+                    }
                 }
             }
         }

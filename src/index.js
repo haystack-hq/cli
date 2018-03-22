@@ -13,7 +13,7 @@ var Printer = require('./lib/printer');
 
 /* define api options */
 var agentOptions = { uri: config.haystack_agent_enpoint }
-// var agentOptions = { uri: config.haystack_api_enpoint, response: [] }
+// var agentOptions = { uri: config.haystack_agent_enpoint, response: [] }
 var websocketConfig = { uri: config.haystack_websocket_endpoint }
 
 

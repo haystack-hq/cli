@@ -150,7 +150,7 @@ describe('cmd-list', function () {
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
         var cmdList = new CmdList(program, hayStackServiceAdapter, cmdPromptAdapter);
 
-        expect(cmdList.do()).to.be.rejectedWith('There are no stacks currently running.')
+        expect(cmdList.do()).to.be.rejectedWith('There are currently no stacks running.')
 
     })
 

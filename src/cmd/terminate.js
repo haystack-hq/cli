@@ -17,6 +17,7 @@ var CmdTerminate = function(program, hayStackServiceAdapter, cmdPromptAdapter, p
 
     program
         .command('terminate')
+        .alias('rm')
         .description('Terminate a stack')
         .option('-i, --identifier <name>', 'name of stack. If omitted, the stack from the current folder will be used')
         .action(function (cmd) {
@@ -36,7 +37,13 @@ CmdTerminate.prototype.action = function(cmd) {
                 .catch(function () {})
         })
         .catch(function (err){
-            self.printer.print(colors.red(err.response.data))
+            if (err.errno === 'ECONNREFUSED') {
+                self.printer.print(consoleMessages.haystackNotRunning)
+                self.printer.print(colors.red(err.errno + ' on port ' + err.port + '.'))
+            }
+            else {
+                self.printer.print(colors.red(err))
+            }
         });
 
 }
@@ -103,7 +110,6 @@ CmdTerminate.prototype.terminateStack = function (data) {
     return new Promise(function(resolve, reject) {
         self.hayStackServiceAdapter.delete('stacks/' + data.identifier)
             .then(function (result) {
-                console.log(1, result)
                 if (Object.keys(result).length) {
                     resolve(result)
                 }
@@ -112,7 +118,6 @@ CmdTerminate.prototype.terminateStack = function (data) {
                 }
             })
             .catch(function (err) {
-                console.log(2, err)
                 reject(err)
             })
     })
@@ -130,7 +135,7 @@ CmdTerminate.prototype.websocketListeningAndConsoleMessaging = function (result)
         var error = false
 
         ws.on('error', function (err) {
-            self.printer.print(colors.red(consoleMessages.haystackNotRunning))
+            // self.printer.print(colors.red(consoleMessages.haystackNotRunning))
 
             ws.close()
 
