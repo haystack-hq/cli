@@ -35,6 +35,9 @@ CmdList.prototype.action = function(cmd) {
                 self.printer.print(consoleMessages.haystackNotRunning)
                 self.printer.print(colors.red(err.errno + ' on port ' + err.port + '.'))
             }
+            else if (err.errno === 'no-stacks') {
+                self.printer.print(err.message)
+            }
             else {
                 self.printer.print(colors.red(err))
             }
@@ -60,7 +63,7 @@ CmdList.prototype.do = function(options) {
                 result.forEach(function (stack) {
                     table.push([
                         stack.identifier,
-                        stack.provider,
+                        stack.provider ? stack.provider : 'local',
                         stack.status,
                         stack.health
                     ])
@@ -87,7 +90,7 @@ CmdList.prototype.getStacks = function (options) {
                     resolve(result)
                 }
                 else {
-                    reject('There are no stacks currently running.')
+                    reject({errno: 'no-stacks', message: 'There are currently no stacks running.'})
                 }
             })
             .catch(function (err) {

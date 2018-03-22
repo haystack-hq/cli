@@ -36,6 +36,7 @@ CmdStart.prototype.action = function(cmd) {
                 .catch(function () {})
         })
         .catch(function (err){
+            console.log(err)
             self.printer.print(colors.red(err.message))
         });
 
@@ -62,8 +63,10 @@ CmdStart.prototype.do = function(options) {
 CmdStart.prototype.parseOptions = function (options) {
     // default data
     var data = {
-        stack_file_location: process.cwd(),
-        mount: true
+        // todo: remove the hardcoded Haystackfile.json
+        stack_file_location: process.cwd() + '/Haystackfile.json',
+        // mount: true,
+        provider: 'local'
     }
 
     // identifier flag with string
@@ -133,11 +136,13 @@ CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
 
         ws.on('message', function incoming(m) {
             var message = JSON.parse(m)
+            var event = message.event
+            var data = message.data
 
-            if (message.identifier === result.identifier)
+            if (data.identifier === result.identifier)
             {
                 // print services' updates
-                message.services.forEach(function (service) {
+                data.services.forEach(function (service) {
                     if(receivedServices[service.name] !== service.status) {
                         receivedServices[service.name] = service.status
                         self.printer.print(consoleMessages.serviceIs, [service.name, service.status])
@@ -145,17 +150,17 @@ CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
                 })
 
                 // switch between statuses for output messages
-                switch(message.status) {
+                switch(data.status) {
                     case 'starting':
                     case 'provisioning':
                         break
                     case 'impaired':
-                        self.printer.print(consoleMessages.impaired, [message.identifier])
+                        self.printer.print(consoleMessages.impaired, [data.identifier])
                         ws.close()
                         resolve()
                         break
                     case 'running':
-                        self.printer.print(consoleMessages.running, [message.identifier])
+                        self.printer.print(consoleMessages.running, [data.identifier])
                         ws.close()
                         resolve()
                         break

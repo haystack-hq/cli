@@ -103,6 +103,7 @@ CmdTerminate.prototype.terminateStack = function (data) {
     return new Promise(function(resolve, reject) {
         self.hayStackServiceAdapter.delete('stacks/' + data.identifier)
             .then(function (result) {
+                console.log(1, result)
                 if (Object.keys(result).length) {
                     resolve(result)
                 }
@@ -111,6 +112,7 @@ CmdTerminate.prototype.terminateStack = function (data) {
                 }
             })
             .catch(function (err) {
+                console.log(2, err)
                 reject(err)
             })
     })
@@ -151,11 +153,13 @@ CmdTerminate.prototype.websocketListeningAndConsoleMessaging = function (result)
 
         ws.on('message', function incoming(m) {
             var message = JSON.parse(m)
+            var event = message.event
+            var data = message.data
 
-            if (message.identifier === result.identifier)
+            if (data.identifier === result.identifier)
             {
                 // print services' updates
-                message.services.forEach(function (service) {
+                data.services.forEach(function (service) {
                     if(receivedServices[service.name] !== service.status) {
                         receivedServices[service.name] = service.status
                         self.printer.print(consoleMessages.serviceIs, [service.name, service.status])
@@ -163,11 +167,11 @@ CmdTerminate.prototype.websocketListeningAndConsoleMessaging = function (result)
                 })
 
                 // switch between statuses for output messages
-                switch(message.status) {
+                switch(data.status) {
                     case 'terminating':
                         break
                     case 'terminated':
-                        self.printer.print(consoleMessages.terminated, [message.identifier])
+                        self.printer.print(consoleMessages.terminated, [data.identifier])
                         ws.close()
                         resolve()
                         break
