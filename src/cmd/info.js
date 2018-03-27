@@ -141,6 +141,15 @@ CmdInfo.prototype.printInfo = function (result) {
     table.push(['Status:', capitalize(result.status)])
     // health
     table.push(['Health:', capitalize(result.health)])
+    // stack file location
+    table.push(['Stack File Location:', capitalize(result.stack_file_location)])
+    // mode
+    table.push(['Mode:', capitalize(result.mode)])
+    // terminated on
+    if(result.terminated_on) {
+        table.push(['Terminated On:', new Date(result.terminated_on)])
+    }
+
     // services
     table.push(['Services:', result.services.length])
 
@@ -148,7 +157,7 @@ CmdInfo.prototype.printInfo = function (result) {
 
     // single services
     result.services.forEach(function (service, key) {
-        self.printer.print(service.name + ' service:')
+        self.printer.print('  ' + service.name + ' service:')
 
         table = new Table({
             chars: { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': ''
@@ -158,11 +167,12 @@ CmdInfo.prototype.printInfo = function (result) {
             style: { 'padding-left': 1, 'padding-right': 0 }
         });
 
-        table.push(['', 'Status:', capitalize(service.status)])
-        table.push(['', 'Exists:', self.boolToString(service.exists)])
-        table.push(['', 'Running:', self.boolToString(service.is_running)])
-        table.push(['', 'Provisioned:', self.boolToString(service.is_provisioned)])
-        table.push(['', 'Healthy:', self.boolToString(service.is_healthy)])
+        table.push([' ', 'Status:', capitalize(service.status)])
+        table.push([' ', 'Exists:', self.boolToString(service.exists)])
+        table.push([' ', 'Running:', self.boolToString(service.is_running)])
+        table.push([' ', 'Provisioned:', self.boolToString(service.is_provisioned)])
+        table.push([' ', 'Healthy:', self.boolToString(service.is_healthy)])
+        table.push([' ', 'External Port:', result.haystack_file.services[service.name].ports[0].host])
 
         self.printer.print(table.toString())
     })
