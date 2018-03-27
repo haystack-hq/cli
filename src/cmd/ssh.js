@@ -63,7 +63,11 @@ CmdSsh.prototype.parseOptions = function (options) {
                         resolve(data)
                     }
                     else {
-                        reject('No stack found at this location. Please provide the stack identifier with the -i option.')
+                        var rejection = {
+                            type: 'info',
+                            message: 'No stack found at this location. Please provide the stack identifier with the -i option.'
+                        }
+                        reject(rejection)
                     }
                 })
                 .catch(function (err) {

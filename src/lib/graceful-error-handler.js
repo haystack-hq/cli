@@ -9,6 +9,9 @@ module.exports = function(printer, err) {
     else if (err.response && err.response.data) {
         printer.print(colors.red(err.response.data))
     }
+    else if (err.type == 'info') {
+        printer.print(err.message)
+    }
     else {
         printer.print(colors.red(err))
     }
