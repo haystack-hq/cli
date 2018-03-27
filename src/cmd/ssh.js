@@ -15,11 +15,12 @@ var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer
     this.printer = printer
 
     program
-        .command('ssh')
+        .command('ssh <service>')
         .option('-i, --identifier <name>', 'name of your stack. If omitted, the folder name will be used')
-        .option('-s, --service [name]', 'name of the service.')
-        .description('SSH into a container in the stack')
-        .action(function (cmd) {
+        .description('SSH into a service in the stack')
+        .action(function (service, cmd) {
+            cmd.service = service
+
             self.action(cmd)
         })
 
@@ -28,15 +29,16 @@ var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer
 CmdSsh.prototype.action = function(cmd) {
     var self = this
 
-    //exec('docker exec -it ' + cmd.service + ' /bin/sh')
-
-    this.do(cmd)
+    this.parseOptions(cmd)
+        .then(function (result) {
+            return self.do(result)
+        })
         .then(function (result) {
             exec(result.cmd)
         })
-        .catch(function (err){
+        .catch(function (err) {
             GracefulErrorHandler(self.printer, err)
-        });
+        })
 
 }
 
@@ -61,7 +63,7 @@ CmdSsh.prototype.parseOptions = function (options) {
                         resolve(data)
                     }
                     else {
-                        reject('No stack found at this location')
+                        reject('No stack found at this location. Please provide the stack identifier with the -i option.')
                     }
                 })
                 .catch(function (err) {

@@ -81,7 +81,7 @@ CmdTerminate.prototype.parseOptions = function (options) {
                         resolve(data)
                     }
                     else {
-                        reject('No stack found at this location')
+                        reject('No stack found at this location. Please provide the stack identifier with the -i option.')
                     }
                 })
                 .catch(function (err) {

@@ -31,7 +31,9 @@ CmdStart.prototype.action = function(cmd) {
 
     this.do(cmd)
         .then(function (result) {
-
+            self.websocketListeningAndConsoleMessaging(result)
+                .then(function () {})
+                .catch(function () {})
         })
         .catch(function (err){
             GracefulErrorHandler(self.printer, err)
