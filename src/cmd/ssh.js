@@ -4,6 +4,7 @@ var Table = require('cli-table')
 var colors = require('colors')
 var consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
+const StackSearch = require('../lib/stack-search')
 var exec = require('executive')
 
 var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
@@ -27,27 +28,11 @@ var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer
 CmdSsh.prototype.action = function(cmd) {
     var self = this
 
-    // console.log(cmd)
+    //exec('docker exec -it ' + cmd.service + ' /bin/sh')
 
-    exec('docker exec -it ' + cmd.service + ' /bin/sh')
-
-    // this.do(cmd)
-    //     .then(function (result) {
-    //         self.printer.print(result);
-    //     })
-    //     .catch(function (err){
-    //         if (err.errno === 'no-stacks') {
-    //             self.printer.print(err.message)
-    //         }
-    //         else {
-    //             GracefulErrorHandler(self.printer, err)
-    //         }
-    //     });
     this.do(cmd)
         .then(function (result) {
-            self.websocketListeningAndConsoleMessaging(result)
-                .then(function () {})
-                .catch(function () {})
+            exec(result.cmd)
         })
         .catch(function (err){
             GracefulErrorHandler(self.printer, err)
@@ -59,7 +44,10 @@ CmdSsh.prototype.parseOptions = function (options) {
     var self = this
 
     return new Promise(function (resolve, reject) {
-        var data = {}
+        var data = {
+            service: options.service,
+            new_terminal: false
+        }
 
         if( ! options.identifier) {
             var params = {
@@ -68,9 +56,7 @@ CmdSsh.prototype.parseOptions = function (options) {
             StackSearch(self.hayStackServiceAdapter, params)
                 .then(function (result) {
                     if(result.length) {
-                        data = {
-                            identifier: result[0].identifier
-                        }
+                        data.identifier = result[0].identifier
 
                         resolve(data)
                     }
@@ -83,9 +69,7 @@ CmdSsh.prototype.parseOptions = function (options) {
                 })
         }
         else if (options.identifier && typeof options.identifier === 'string') {
-            data = {
-                identifier: options.identifier
-            }
+            data.identifier = options.identifier
 
             resolve(data)
         }
@@ -95,50 +79,10 @@ CmdSsh.prototype.parseOptions = function (options) {
 CmdSsh.prototype.do = function(options) {
     var self = this;
 
-    var table = new Table({
-        head: ['identifier', 'provider', 'status', 'health'],
-        style: {
-            head: ['bold']
-        }
-    })
-
-    return new Promise(function (resolve, reject) {
-
-        self.getStacks(options)
-            .then(function (result) {
-                // add each stack from the result to the table
-                result.forEach(function (stack) {
-                    table.push([
-                        stack.identifier,
-                        stack.provider ? stack.provider : 'local',
-                        stack.status,
-                        stack.health
-                    ])
-                })
-
-                resolve(table.toString())
-            })
-            .catch(function (err) {
-                reject(err)
-            })
-
-    })
-
-}
-
-CmdSsh.prototype.getStacks = function (options) {
-
-    var self = this;
-
     return new Promise(function(resolve, reject) {
-        self.hayStackServiceAdapter.get('stacks')
+        self.hayStackServiceAdapter.post('stacks/' + options.identifier + '/ssh', options)
             .then(function (result) {
-                if (result.length) {
-                    resolve(result)
-                }
-                else {
-                    reject({errno: 'no-stacks', message: 'There are currently no stacks running.'})
-                }
+                resolve(result)
             })
             .catch(function (err) {
                 reject(err)
