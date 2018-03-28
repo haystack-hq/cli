@@ -13,7 +13,7 @@ const WebSocket = require('ws');
 var Printer = require('../../../src/lib/printer')
 var colors = require('colors');
 
-describe('cmd-terminate', function () {
+describe('cmd-stop', function () {
 
     var printer = new Printer()
     var cmdPromptAdapter = new CmdPromptAdapter(new InquireTestAdapter());

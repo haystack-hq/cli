@@ -103,7 +103,7 @@ CmdStop.prototype.stopStack = function (data) {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-        self.hayStackServiceAdapter.post('stacks', data)
+        self.hayStackServiceAdapter.put('stacks/' + data.identifier, data)
             .then(function (result) {
                 if (Object.keys(result).length) {
                     resolve(result)
