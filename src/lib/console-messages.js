@@ -12,5 +12,9 @@ module.exports = {
     terminated: colors.green('{0} stack has been terminated.'),
     serviceIs: '{0} service is {1}',
     serviceHasBeen: '{0} service has been {1}',
-    haystackNotRunning: colors.red('Haystack is not running.')
+    haystackNotRunning: colors.red('Haystack is not running.'),
+    noStackAtLocation: {
+        type: 'info',
+        message: 'No stack found at this location. Please provide the stack identifier with the -i option.'
+    }
 }

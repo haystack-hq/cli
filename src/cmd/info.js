@@ -1,13 +1,11 @@
 #! /usr/bin/env node
 var Promise = require('bluebird');
-var Validator = require('../lib/validator');
-var Spinner = require('cli-spinner').Spinner;
 const colors = require('colors')
 const Table = require('cli-table')
 const capitalize = require('capitalize')
 const consoleMessages = require('../lib/console-messages')
-const StackSearch = require('../lib/stack-search')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
+const ParseIdentifier = require('../lib/parse-identifier')
 
 var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
 
@@ -59,44 +57,9 @@ CmdInfo.prototype.do = function(options) {
 }
 
 CmdInfo.prototype.parseOptions = function (options) {
-    var self = this
 
-    return new Promise(function (resolve, reject) {
-        var data = {}
+    return ParseIdentifier(this, options, {})
 
-        if( ! options.identifier) {
-            var params = {
-                stack_file_location: process.cwd()
-            }
-            StackSearch(self.hayStackServiceAdapter, params)
-                .then(function (result) {
-                    if(result.length) {
-                        data = {
-                            identifier: result[0].identifier
-                        }
-
-                        resolve(data)
-                    }
-                    else {
-                        var rejection = {
-                            type: 'info',
-                            message: 'No stack found at this location. Please provide the stack identifier with the -i option.'
-                        }
-                        reject(rejection)
-                    }
-                })
-                .catch(function (err) {
-                    reject(err)
-                })
-        }
-        else if (options.identifier && typeof options.identifier === 'string') {
-            data = {
-                identifier: options.identifier
-            }
-
-            resolve(data)
-        }
-    })
 }
 
 CmdInfo.prototype.getInfo = function (data) {

@@ -4,7 +4,7 @@ var Validator = require('../lib/validator');
 const WebSocket = require('ws');
 const consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
-const StackSearch = require('../lib/stack-search')
+const ParseIdentifier = require('../lib/parse-identifier')
 
 var CmdStop = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig){
 
@@ -60,42 +60,13 @@ CmdStop.prototype.do = function(options) {
 }
 
 CmdStop.prototype.parseOptions = function (options) {
-    var self = this
 
-    return new Promise(function (resolve, reject) {
-        var data = {
-            action: 'stop'
-        }
+    var data = {
+        action: 'stop'
+    }
 
-        if( ! options.identifier) {
-            var params = {
-                stack_file_location: process.cwd()
-            }
-            StackSearch(self.hayStackServiceAdapter, params)
-                .then(function (result) {
-                    if(result.length) {
-                        data.identifier = result[0].identifier
+    return ParseIdentifier(this, options, data)
 
-                        resolve(data)
-                    }
-                    else {
-                        var rejection = {
-                            type: 'info',
-                            message: 'No stack found at this location. Please provide the stack identifier with the -i option.'
-                        }
-                        reject(rejection)
-                    }
-                })
-                .catch(function (err) {
-                    reject(err)
-                })
-        }
-        else if (options.identifier && typeof options.identifier === 'string') {
-            data.identifier = options.identifier
-
-            resolve(data)
-        }
-    })
 }
 
 CmdStop.prototype.stopStack = function (data) {

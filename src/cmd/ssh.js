@@ -1,11 +1,9 @@
 #! /usr/bin/env node
 var Promise = require('bluebird');
-var Table = require('cli-table')
 var colors = require('colors')
-var consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
-const StackSearch = require('../lib/stack-search')
 var exec = require('executive')
+const ParseIdentifier = require('../lib/parse-identifier')
 
 var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
 
@@ -43,43 +41,14 @@ CmdSsh.prototype.action = function(cmd) {
 }
 
 CmdSsh.prototype.parseOptions = function (options) {
-    var self = this
 
-    return new Promise(function (resolve, reject) {
-        var data = {
-            service: options.service,
-            new_terminal: false
-        }
+    var data = {
+        service: options.service,
+        new_terminal: false
+    }
 
-        if( ! options.identifier) {
-            var params = {
-                stack_file_location: process.cwd()
-            }
-            StackSearch(self.hayStackServiceAdapter, params)
-                .then(function (result) {
-                    if(result.length) {
-                        data.identifier = result[0].identifier
+    return ParseIdentifier(this, options, data)
 
-                        resolve(data)
-                    }
-                    else {
-                        var rejection = {
-                            type: 'info',
-                            message: 'No stack found at this location. Please provide the stack identifier with the -i option.'
-                        }
-                        reject(rejection)
-                    }
-                })
-                .catch(function (err) {
-                    reject(err)
-                })
-        }
-        else if (options.identifier && typeof options.identifier === 'string') {
-            data.identifier = options.identifier
-
-            resolve(data)
-        }
-    })
 }
 
 CmdSsh.prototype.do = function(options) {

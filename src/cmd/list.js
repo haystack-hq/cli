@@ -2,7 +2,6 @@
 var Promise = require('bluebird');
 var Table = require('cli-table')
 var colors = require('colors')
-var consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 
 var CmdList = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
