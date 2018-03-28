@@ -3,7 +3,7 @@ var CmdPromptAdapter = require('../../../src/adapters/cmd-prompt-adapter');
 var InquireTestAdapter = require('../../../src/adapters/inquirer-test-adapter');
 var HayStackServiceAdapter = require('../../../src/adapters/haystack-service-adapter');
 var ApiTestAdapter = require('../../../src/adapters/api-test-adapter');
-var CmdTerminate = require('../../../src/cmd/terminate');
+var CmdStop = require('../../../src/cmd/stop');
 var program = require('commander');
 var chai = require('chai');
 var expect = chai.expect;
@@ -43,8 +43,8 @@ describe('cmd-terminate', function () {
         "mode": "local",
         "provider": "local",
         "stack_file_location": null,
-        "status": "terminating",
-        "health": "unhealthy",
+        "status": "stopping",
+        "health": "healthy",
         "created_by": null,
         "do_mount": false,
         "terminated_on": 1521492317971,
@@ -135,22 +135,22 @@ describe('cmd-terminate', function () {
             }]
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+        var cmdStop = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
-        expect(cmdTerminate.parseOptions({})).to.eventually.contain({ identifier: 'test' })
+        expect(cmdStop.parseOptions({})).to.eventually.contain({ identifier: 'test' })
 
     })
 
-    it('should err trying to terminate the stack', function () {
+    it('should err trying to stop the stack', function () {
 
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
             error: 'The stack could not be terminated.'
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+        var cmdStop = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
-        expect(cmdTerminate.do({identifier: 'my-id'})).to.eventually.be.rejectedWith('The stack could not be terminated.')
+        expect(cmdStop.do({identifier: 'my-id'})).to.eventually.be.rejectedWith('The stack could not be terminated.')
 
     })
 
@@ -161,13 +161,18 @@ describe('cmd-terminate', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+        var cmdStop = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
         var options = {
             identifier: 'my-id'
         }
 
-        expect(cmdTerminate.parseOptions(options)).to.eventually.deep.equal({identifier: 'my-id'})
+        var expected = {
+            action: 'stop',
+            identifier: 'my-id'
+        }
+
+        expect(cmdStop.parseOptions(options)).to.eventually.deep.equal(expected)
 
     })
 
@@ -178,9 +183,9 @@ describe('cmd-terminate', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
+        var cmdStop = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
 
-        expect(cmdTerminate.terminateStack({ identifier: 'abc' })).to.eventually.equal(response)
+        expect(cmdStop.stopStack({ action: 'stop', identifier: 'abc' })).to.eventually.equal(response)
 
     })
 
@@ -217,7 +222,7 @@ describe('cmd-terminate', function () {
                 "mode": "local",
                 "provider": "local",
                 "stack_file_location": null,
-                "status": "terminating",
+                "status": "stopping",
                 "health": "healthy",
                 "created_by": null,
                 "do_mount": false,
@@ -296,7 +301,7 @@ describe('cmd-terminate', function () {
                 "services": [
                     {
                         "name": "web_1",
-                        "status": "terminating",
+                        "status": "stopping",
                         "exists": true,
                         "is_running": false,
                         "is_provisioned": true,
@@ -304,7 +309,7 @@ describe('cmd-terminate', function () {
                     },
                     {
                         "name": "web_2",
-                        "status": "terminating",
+                        "status": "stopping",
                         "exists": true,
                         "is_running": false,
                         "is_provisioned": true,
@@ -316,7 +321,7 @@ describe('cmd-terminate', function () {
                 "mode": "local",
                 "provider": "local",
                 "stack_file_location": null,
-                "status": "terminating",
+                "status": "stopping",
                 "health": "unhealthy",
                 "created_by": null,
                 "do_mount": false,
@@ -395,7 +400,7 @@ describe('cmd-terminate', function () {
                 "services": [
                     {
                         "name": "web_1",
-                        "status": "terminated",
+                        "status": "stopped",
                         "exists": false,
                         "is_running": false,
                         "is_provisioned": false,
@@ -403,7 +408,7 @@ describe('cmd-terminate', function () {
                     },
                     {
                         "name": "web_2",
-                        "status": "terminated",
+                        "status": "stopped",
                         "exists": false,
                         "is_running": false,
                         "is_provisioned": false,
@@ -415,7 +420,7 @@ describe('cmd-terminate', function () {
                 "mode": "local",
                 "provider": "local",
                 "stack_file_location": null,
-                "status": "terminated",
+                "status": "stopped",
                 "health": "unhealthy",
                 "created_by": null,
                 "do_mount": false,
@@ -507,19 +512,19 @@ describe('cmd-terminate', function () {
             response: response
         })
         var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdTerminate = new CmdTerminate(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
+        var cmdStop = new CmdStop(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 
 
         var expected = [
-            colors.yellow('test stack is terminating...'),
-            'web_1 service is terminating',
-            'web_2 service is terminating',
-            'web_1 service is terminated',
-            'web_2 service is terminated',
-            colors.green('test stack has been terminated.')
+            colors.yellow('test stack is stopping...'),
+            'web_1 service is stopping',
+            'web_2 service is stopping',
+            'web_1 service is stopped',
+            'web_2 service is stopped',
+            colors.green('test stack has been stopped.')
         ]
 
-        cmdTerminate.websocketListeningAndConsoleMessaging(response)
+        cmdStop.websocketListeningAndConsoleMessaging(response)
             .then(function () {
                 expect(messages).to.deep.equal(expected)
 
