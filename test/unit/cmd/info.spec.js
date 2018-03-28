@@ -19,97 +19,100 @@ describe('cmd-info', function () {
     var printer = new Printer()
     var cmdPromptAdapter = new CmdPromptAdapter(new InquireTestAdapter());
     var response = {
-        "_id": "9d3816f9d36e4d648a3b01edfbf9b00e",
-        "identifier": "test",
+        "_id": "d8bec439053145efa1fc487d884905a6",
+        "identifier": "simple-haystack-file",
         "services": [
             {
                 "name": "web_1",
-                "status": "running",
+                "status": "provisioning",
                 "exists": true,
                 "is_running": true,
-                "is_provisioned": true,
-                "is_healthy": true
+                "is_provisioned": false,
+                "is_healthy": false
             },
             {
                 "name": "web_2",
-                "status": "running",
+                "status": "provisioning",
                 "exists": true,
                 "is_running": true,
-                "is_provisioned": true,
-                "is_healthy": true
+                "is_provisioned": false,
+                "is_healthy": false
             }
         ],
-        "haystack_file_encoded": "ew0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJrZXkiOiAidmFsdWUiDQogICAgfSwNCiAgICB7DQogICAgICAia2V5IjogeyAiY2hpbGRrZXkiOiAiY2hpbGR2YWx1ZSIgfQ0KICAgIH0NCiAgXSwNCg0KICAic2VydmljZXMiOiB7DQogICAgIndlYl8xIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmltYWdlIiwNCiAgICAgICJpbWFnZSI6ICJoZWxsby13b3JsZCINCiAgICB9LA0KDQogICAgIndlYl8yIjogew0KICAgICAgInR5cGUiOiAiZG9ja2VyLmJ1aWxkIiwNCiAgICAgICJzcmMiOiAiLiINCiAgICB9DQogIH0NCn0=",
-        "build_encoded": "ew0KICAiaWRlbnRpZmllciI6ICJ0ZXN0LXN0YWNrIiwNCiAgIm9iamVjdHMiOiB7DQogICAgImJ1aWxkcyI6IFsNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInRlc3QtYnVpbGQtaW1hZ2UiLA0KICAgICAgICAidGFnIjogInRlc3Qtd2l0aC1jdXN0b20taW1hZ2UiDQogICAgICB9DQogICAgXSwNCiAgICAiaW1hZ2VzIjogWw0KICAgICAgew0KICAgICAgICAibmFtZSI6ICJ0dXR1bS9oZWxsby13b3JsZCINCiAgICAgIH0NCiAgICBdLA0KICAgICJjb250YWluZXJzIjogWw0KICAgICAgew0KICAgICAgICAiaW1hZ2UiOiAidHV0dW0vaGVsbG8td29ybGQiLA0KICAgICAgICAibmFtZSI6ICJ3ZWJfMSIsDQogICAgICAgICJkZXRhY2giOiB0cnVlLA0KICAgICAgICAicG9ydHMiOiBbDQogICAgICAgICAgew0KICAgICAgICAgICAgImNvbnRhaW5lciI6ICI4MCIsDQogICAgICAgICAgICAiaG9zdCI6ICI0NDU0Ig0KICAgICAgICAgIH0NCiAgICAgICAgXQ0KICAgICAgfSwNCiAgICAgIHsNCiAgICAgICAgImltYWdlIjogInR1dHVtL2hlbGxvLXdvcmxkIiwNCiAgICAgICAgIm5hbWUiOiAid2ViXzIiLA0KICAgICAgICAiZGV0YWNoIjogdHJ1ZSwNCiAgICAgICAgInBvcnRzIjogWw0KICAgICAgICAgIHsNCiAgICAgICAgICAgICJjb250YWluZXIiOiAiODAiLA0KICAgICAgICAgICAgImhvc3QiOiAiNDQ1NSINCiAgICAgICAgICB9DQogICAgICAgIF0NCiAgICAgIH0NCiAgICBdLA0KICAgICJuZXR3b3JrcyI6IFtdDQogIH0NCn0NCg0KDQo",
         "mode": "local",
         "provider": "local",
-        "stack_file_location": null,
-        "status": "running",
-        "health": "healthy",
+        "stack_file_location": "/Users/jaime/gosolid/haystack/haystack-agent/resources/simple-haystack-file/Haystackfile.json",
+        "status": "provisioning",
+        "health": "unhealthy",
         "created_by": null,
         "do_mount": false,
-        "terminated_on": 1521492317971,
+        "terminated_on": null,
         "haystack_file": {
-            "variables": [
-                {
-                    "key": "value"
-                },
-                {
-                    "key": {
-                        "childkey": "childvalue"
-                    }
-                }
-            ],
             "services": {
                 "web_1": {
-                    "type": "docker.image",
-                    "image": "hello-world"
+                    "type": "docker.container",
+                    "image": "tutum/hello-world",
+                    "ports": [
+                        {
+                            "container": "80",
+                            "host": "4458"
+                        }
+                    ]
                 },
                 "web_2": {
-                    "type": "docker.build",
-                    "src": "."
+                    "type": "docker.container",
+                    "image": "tutum/hello-world",
+                    "ports": [
+                        {
+                            "container": "80",
+                            "host": "4459"
+                        }
+                    ]
                 }
             }
         },
         "build": {
-            "identifier": "test-stack",
+            "identifier": "simple-haystack-file",
             "objects": {
-                "builds": [
-                    {
-                        "image": "test-build-image",
-                        "tag": "test-with-custom-image"
-                    }
-                ],
+                "builds": [],
                 "images": [
-                    {
-                        "name": "tutum/hello-world"
-                    }
+                    "tutum/hello-world",
+                    "tutum/hello-world"
                 ],
                 "containers": [
                     {
-                        "image": "tutum/hello-world",
                         "name": "web_1",
-                        "detach": true,
+                        "detatch": true,
+                        "labels": {
+                            "com.haystack.identifier": "simple-haystack-file"
+                        },
+                        "image": "tutum/hello-world",
                         "ports": [
                             {
                                 "container": "80",
-                                "host": "4454"
+                                "host": "4458"
                             }
                         ]
                     },
                     {
-                        "image": "tutum/hello-world",
                         "name": "web_2",
-                        "detach": true,
+                        "detatch": true,
+                        "labels": {
+                            "com.haystack.identifier": "simple-haystack-file"
+                        },
+                        "image": "tutum/hello-world",
                         "ports": [
                             {
                                 "container": "80",
-                                "host": "4455"
+                                "host": "4459"
                             }
                         ]
                     }
                 ],
-                "networks": []
+                "networks": [
+                    null,
+                    null
+                ]
             }
         }
     }
@@ -237,6 +240,15 @@ describe('cmd-info', function () {
         table.push(['Status:', capitalize(response.status)])
         // health
         table.push(['Health:', capitalize(response.health)])
+        // stack file location
+        table.push(['Stack File Location:', capitalize(response.stack_file_location)])
+        // mode
+        table.push(['Mode:', capitalize(response.mode)])
+        // terminated on
+        if(response.terminated_on) {
+            table.push(['Terminated On:', new Date(response.terminated_on)])
+        }
+
         // services
         table.push(['Services:', response.services.length])
 
@@ -244,7 +256,7 @@ describe('cmd-info', function () {
 
         // single services
         response.services.forEach(function (service, key) {
-            expected.push(service.name + ' service:')
+            expected.push('  ' + service.name + ' service:')
 
             table = new Table({
                 chars: { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': ''
@@ -254,11 +266,12 @@ describe('cmd-info', function () {
                 style: { 'padding-left': 1, 'padding-right': 0 }
             });
 
-            table.push(['', 'Status:', capitalize(service.status)])
-            table.push(['', 'Exists:', cmdInfo.boolToString(service.exists)])
-            table.push(['', 'Running:', cmdInfo.boolToString(service.is_running)])
-            table.push(['', 'Provisioned:', cmdInfo.boolToString(service.is_provisioned)])
-            table.push(['', 'Healthy:', cmdInfo.boolToString(service.is_healthy)])
+            table.push([' ', 'Status:', capitalize(service.status)])
+            table.push([' ', 'Exists:', cmdInfo.boolToString(service.exists)])
+            table.push([' ', 'Running:', cmdInfo.boolToString(service.is_running)])
+            table.push([' ', 'Provisioned:', cmdInfo.boolToString(service.is_provisioned)])
+            table.push([' ', 'Healthy:', cmdInfo.boolToString(service.is_healthy)])
+            table.push([' ', 'External Port:', response.haystack_file.services[service.name].ports[0].host])
 
             expected.push(table.toString())
         })
