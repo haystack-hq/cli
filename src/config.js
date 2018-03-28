@@ -6,7 +6,7 @@ var configFile = require(process.env.HOME + '/.haystack/config.json')
 
 config.env = 'production';
 config.debug_mode = 'off';
-config.daemon_port = configFile.daemon_port ? configFile.daemon_port : 3000
+config.daemon_port = configFile.AGENT_PORT ? configFile.AGENT_PORT : 3000
 
 // Haystack Agent
 config.haystack_agent_enpoint = 'http://127.0.0.1:' + config.daemon_port;
