@@ -1,17 +1,14 @@
 #! /usr/bin/env node
 var Promise = require('bluebird');
-var Validator = require('../lib/validator');
 const WebSocket = require('ws');
 const consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 const ParseIdentifier = require('../lib/parse-identifier')
 
-var CmdStop = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig){
-
+var CmdStop = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig) {
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
-    this.validator = new Validator();
     this.websocketConfig = websocketConfig
     this.printer = printer
 
@@ -22,11 +19,9 @@ var CmdStop = function(program, hayStackServiceAdapter, cmdPromptAdapter, printe
         .action(function (cmd) {
             self.action(cmd)
         })
-
 }
 
 CmdStop.prototype.action = function(cmd) {
-
     var self = this
 
     this.do(cmd)
@@ -38,7 +33,6 @@ CmdStop.prototype.action = function(cmd) {
         .catch(function (err){
             GracefulErrorHandler(self.printer, err)
         });
-
 }
 
 CmdStop.prototype.do = function(options) {
@@ -46,10 +40,12 @@ CmdStop.prototype.do = function(options) {
 
     return new Promise(function (resolve, reject) {
 
-        var data = self.parseOptions(options)
-
-        // start the stack
-        self.stopStack(data)
+        // parse options
+        self.parseOptions(options)
+            .then(function (result) {
+                // start the stack
+                return self.stopStack(result)
+            })
             .then(function (result) {
                 resolve(result)
             })
@@ -60,17 +56,14 @@ CmdStop.prototype.do = function(options) {
 }
 
 CmdStop.prototype.parseOptions = function (options) {
-
     var data = {
         action: 'stop'
     }
 
     return ParseIdentifier(this, options, data)
-
 }
 
 CmdStop.prototype.stopStack = function (data) {
-
     var self = this;
 
     return new Promise(function(resolve, reject) {
@@ -87,11 +80,9 @@ CmdStop.prototype.stopStack = function (data) {
                 reject(err)
             })
     })
-
 }
 
 CmdStop.prototype.websocketListeningAndConsoleMessaging = function (result) {
-
     var self = this
 
     return new Promise(function (resolve, reject) {

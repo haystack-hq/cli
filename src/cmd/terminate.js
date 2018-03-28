@@ -1,18 +1,15 @@
 #! /usr/bin/env node
 var Promise = require('bluebird');
-var Validator = require('../lib/validator');
 const WebSocket = require('ws');
 const colors = require('colors')
 const consoleMessages = require('../lib/console-messages')
 const ParseIdentifier = require('../lib/parse-identifier')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 
-var CmdTerminate = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig){
-
+var CmdTerminate = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig) {
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
-    this.validator = new Validator();
     this.websocketConfig = websocketConfig
     this.printer = printer
 
@@ -24,11 +21,9 @@ var CmdTerminate = function(program, hayStackServiceAdapter, cmdPromptAdapter, p
         .action(function (cmd) {
             self.action(cmd)
         })
-
 }
 
 CmdTerminate.prototype.action = function(cmd) {
-
     var self = this
 
     this.do(cmd)
@@ -40,7 +35,6 @@ CmdTerminate.prototype.action = function(cmd) {
         .catch(function (err){
             GracefulErrorHandler(self.printer, err)
         });
-
 }
 
 CmdTerminate.prototype.do = function(options) {
@@ -62,13 +56,10 @@ CmdTerminate.prototype.do = function(options) {
 }
 
 CmdTerminate.prototype.parseOptions = function (options) {
-
     return ParseIdentifier(this, options, {})
-
 }
 
 CmdTerminate.prototype.terminateStack = function (data) {
-
     var self = this;
 
     return new Promise(function(resolve, reject) {
@@ -85,11 +76,9 @@ CmdTerminate.prototype.terminateStack = function (data) {
                 reject(err)
             })
     })
-
 }
 
 CmdTerminate.prototype.websocketListeningAndConsoleMessaging = function (result) {
-
     var self = this
 
     return new Promise(function (resolve, reject) {

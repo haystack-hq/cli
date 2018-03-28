@@ -7,12 +7,10 @@ const consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 const ParseIdentifier = require('../lib/parse-identifier')
 
-var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
-
+var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer) {
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
-    this.validator = new Validator();
     this.printer = printer
 
     program
@@ -22,11 +20,9 @@ var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, printe
         .action(function (cmd) {
             self.action(cmd)
         })
-
 }
 
 CmdInfo.prototype.action = function(cmd) {
-
     var self = this
 
     this.do(cmd)
@@ -57,13 +53,10 @@ CmdInfo.prototype.do = function(options) {
 }
 
 CmdInfo.prototype.parseOptions = function (options) {
-
     return ParseIdentifier(this, options, {})
-
 }
 
 CmdInfo.prototype.getInfo = function (data) {
-
     var self = this;
 
     return new Promise(function(resolve, reject) {
@@ -80,11 +73,9 @@ CmdInfo.prototype.getInfo = function (data) {
                 reject(err)
             })
     })
-
 }
 
 CmdInfo.prototype.printInfo = function (result) {
-
     var self = this
 
     // title
@@ -145,7 +136,6 @@ CmdInfo.prototype.boolToString = function (bool) {
     if (bool) {
         return 'Yes'
     }
-
     return 'No'
 }
 

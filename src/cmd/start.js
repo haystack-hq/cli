@@ -1,16 +1,13 @@
 #! /usr/bin/env node
 var Promise = require('bluebird');
-var Validator = require('../lib/validator');
 const WebSocket = require('ws');
 const consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 
-var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig){
-
+var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig) {
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
-    this.validator = new Validator();
     this.websocketConfig = websocketConfig
     this.printer = printer
 
@@ -22,11 +19,9 @@ var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter, print
         .action(function (cmd) {
             self.action(cmd)
         })
-
 }
 
 CmdStart.prototype.action = function(cmd) {
-
     var self = this
 
     this.do(cmd)
@@ -38,14 +33,12 @@ CmdStart.prototype.action = function(cmd) {
         .catch(function (err){
             GracefulErrorHandler(self.printer, err)
         });
-
 }
 
 CmdStart.prototype.do = function(options) {
     var self = this;
 
     return new Promise(function (resolve, reject) {
-
         var data = self.parseOptions(options)
 
         // start the stack
@@ -82,7 +75,6 @@ CmdStart.prototype.parseOptions = function (options) {
 }
 
 CmdStart.prototype.startStack = function (data) {
-
     var self = this;
 
     return new Promise(function(resolve, reject) {
@@ -99,11 +91,9 @@ CmdStart.prototype.startStack = function (data) {
                 reject(err)
             })
     })
-
 }
 
 CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
-
     var self = this
 
     return new Promise(function (resolve, reject) {

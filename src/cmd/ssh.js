@@ -5,8 +5,7 @@ const GracefulErrorHandler = require('../lib/graceful-error-handler')
 var exec = require('executive')
 const ParseIdentifier = require('../lib/parse-identifier')
 
-var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
-
+var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer) {
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
@@ -21,7 +20,6 @@ var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer
 
             self.action(cmd)
         })
-
 }
 
 CmdSsh.prototype.action = function(cmd) {
@@ -41,14 +39,12 @@ CmdSsh.prototype.action = function(cmd) {
 }
 
 CmdSsh.prototype.parseOptions = function (options) {
-
     var data = {
         service: options.service,
         new_terminal: false
     }
 
     return ParseIdentifier(this, options, data)
-
 }
 
 CmdSsh.prototype.do = function(options) {

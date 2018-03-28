@@ -4,8 +4,7 @@ var Table = require('cli-table')
 var colors = require('colors')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 
-var CmdList = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer){
-
+var CmdList = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer) {
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
@@ -19,7 +18,6 @@ var CmdList = function(program, hayStackServiceAdapter, cmdPromptAdapter, printe
         .action(function (cmd) {
             self.action(cmd)
         })
-
 }
 
 CmdList.prototype.action = function(cmd) {
@@ -43,17 +41,16 @@ CmdList.prototype.action = function(cmd) {
 CmdList.prototype.do = function(options) {
     var self = this;
 
-    var table = new Table({
-        head: ['identifier', 'provider', 'status', 'health'],
-        style: {
-            head: ['bold']
-        }
-    })
-
     return new Promise(function (resolve, reject) {
-
         self.getStacks(options)
             .then(function (result) {
+                var table = new Table({
+                    head: ['identifier', 'provider', 'status', 'health'],
+                    style: {
+                        head: ['bold']
+                    }
+                })
+
                 // add each stack from the result to the table
                 result.forEach(function (stack) {
                     table.push([
@@ -69,13 +66,10 @@ CmdList.prototype.do = function(options) {
             .catch(function (err) {
                 reject(err)
             })
-
     })
-
 }
 
 CmdList.prototype.getStacks = function (options) {
-
     var self = this;
 
     return new Promise(function(resolve, reject) {
@@ -92,7 +86,6 @@ CmdList.prototype.getStacks = function (options) {
                 reject(err)
             })
     })
-
 }
 
 module.exports = CmdList;
