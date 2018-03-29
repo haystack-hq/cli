@@ -1,8 +1,9 @@
 #! /usr/bin/env node
+var path = require('path');
 
 var config = module.exports = {};
 
-var configFile = require(process.env.HOME + '/.haystack/config.json')
+var configFile = require(path.join(process.env.HOME, '/.haystack/config.json'))
 
 config.env = 'production';
 config.debug_mode = 'off';
