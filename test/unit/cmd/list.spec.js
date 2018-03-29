@@ -9,7 +9,7 @@ var chai = require('chai');
 var expect = chai.expect;
 var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
-var Table = require('cli-table')
+var Table = require('cli-table2')
 var colors = require('colors')
 var Printer = require('../../../src/lib/printer')
 

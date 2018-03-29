@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 var Promise = require('bluebird');
 const colors = require('colors')
-const Table = require('cli-table')
+const Table = require('cli-table2')
 const capitalize = require('capitalize')
 const consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
@@ -111,13 +111,13 @@ CmdInfo.prototype.printInfo = function (result) {
 
     // single services
     result.services.forEach(function (service, key) {
-        self.printer.print('  ' + service.name + ' service:')
+        self.printer.print(' ' + service.name + ' service:')
 
         table = new Table({
             chars: { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': ''
                 , 'bottom': '' , 'bottom-mid': '' , 'bottom-left': '' , 'bottom-right': ''
                 , 'left': '' , 'left-mid': '' , 'mid': '' , 'mid-mid': ''
-                , 'right': '' , 'right-mid': '' , 'middle': ' ' },
+                , 'right': '' , 'right-mid': '' , 'middle': '' },
             style: { 'padding-left': 1, 'padding-right': 0 }
         });
 
@@ -127,6 +127,10 @@ CmdInfo.prototype.printInfo = function (result) {
         table.push([' ', 'Provisioned:', self.boolToString(service.is_provisioned)])
         table.push([' ', 'Healthy:', self.boolToString(service.is_healthy)])
         table.push([' ', 'External Port:', result.haystack_file.services[service.name].ports[0].host])
+        // if an error was sent
+        if (service.error && service.error.message) {
+            table.push([' ', 'Error:', service.error.message])
+        }
 
         self.printer.print(table.toString())
     })

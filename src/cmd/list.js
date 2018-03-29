@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 var Promise = require('bluebird');
-var Table = require('cli-table')
+var Table = require('cli-table2')
 var colors = require('colors')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 

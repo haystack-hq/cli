@@ -11,7 +11,7 @@ var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 var Printer = require('../../../src/lib/printer')
 var colors = require('colors');
-const Table = require('cli-table')
+const Table = require('cli-table2')
 const capitalize = require('capitalize')
 
 describe('cmd-info', function () {
@@ -28,7 +28,10 @@ describe('cmd-info', function () {
                 "exists": true,
                 "is_running": true,
                 "is_provisioned": false,
-                "is_healthy": false
+                "is_healthy": false,
+                "error": {
+                    "message": "It failed with port 80 already being used."
+                }
             },
             {
                 "name": "web_2",
@@ -256,13 +259,13 @@ describe('cmd-info', function () {
 
         // single services
         response.services.forEach(function (service, key) {
-            expected.push('  ' + service.name + ' service:')
+            expected.push(' ' + service.name + ' service:')
 
             table = new Table({
                 chars: { 'top': '' , 'top-mid': '' , 'top-left': '' , 'top-right': ''
                     , 'bottom': '' , 'bottom-mid': '' , 'bottom-left': '' , 'bottom-right': ''
                     , 'left': '' , 'left-mid': '' , 'mid': '' , 'mid-mid': ''
-                    , 'right': '' , 'right-mid': '' , 'middle': ' ' },
+                    , 'right': '' , 'right-mid': '' , 'middle': '' },
                 style: { 'padding-left': 1, 'padding-right': 0 }
             });
 
@@ -272,6 +275,10 @@ describe('cmd-info', function () {
             table.push([' ', 'Provisioned:', cmdInfo.boolToString(service.is_provisioned)])
             table.push([' ', 'Healthy:', cmdInfo.boolToString(service.is_healthy)])
             table.push([' ', 'External Port:', response.haystack_file.services[service.name].ports[0].host])
+            // if an error was sent
+            if (service.error && service.error.message) {
+                table.push([' ', 'Error:', service.error.message])
+            }
 
             expected.push(table.toString())
         })
