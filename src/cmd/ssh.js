@@ -35,7 +35,6 @@ CmdSsh.prototype.action = function(cmd) {
         .catch(function (err) {
             GracefulErrorHandler(self.printer, err)
         })
-
 }
 
 CmdSsh.prototype.parseOptions = function (options) {
@@ -59,7 +58,6 @@ CmdSsh.prototype.do = function(options) {
                 reject(err)
             })
     })
-
 }
 
 module.exports = CmdSsh;
