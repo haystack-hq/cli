@@ -5,18 +5,18 @@ var Preferences = require("preferences");
 var program = require('commander');
 var inquirer = require('inquirer');
 var HayStackServiceAdapter = require('./adapters/haystack-service-adapter');
-var AgentAdapter = require('./adapters/agent-adapter');
+var DaemonAdapter = require('./adapters/daemon-adapter');
 var CmdPromptAdapter = require('./adapters/cmd-prompt-adapter');
 var config = require('./config.js');
 var Printer = require('./lib/printer');
 
 /* define api options */
-var agentOptions = { uri: config.haystack_agent_enpoint }
+var daemonOptions = { uri: config.haystack_daemon_enpoint }
 var websocketConfig = { uri: config.haystack_websocket_endpoint }
 
 
 /* setup the adapters */
-var apiAdapter = new AgentAdapter(agentOptions);
+var apiAdapter = new DaemonAdapter(daemonOptions);
 var apiServiceAdapter = new HayStackServiceAdapter(apiAdapter);
 var cmdPromptAdapter = new CmdPromptAdapter(inquirer);
 var printer = new Printer()
