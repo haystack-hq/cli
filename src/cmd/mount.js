@@ -2,7 +2,6 @@
 var Promise = require('bluebird');
 var colors = require('colors')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
-var exec = require('executive')
 const ParseIdentifier = require('../lib/parse-identifier')
 
 var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer) {
@@ -12,7 +11,7 @@ var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer
     this.printer = printer
 
     program
-        .command('unmount [services...]')
+        .command('mount [services...]')
         .option('-i, --identifier <name>', 'name of your stack. If omitted, the folder name will be used')
         .description('Create a filesystem mount to the stack services.')
         .action(function (services, cmd) {
