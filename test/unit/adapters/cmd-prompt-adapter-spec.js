@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 var CmdPromptAdapter = require('../../../src/adapters/cmd-prompt-adapter');
-var InquireTestAdapter = require('../../../src/adapters/inquirer-test-adapter');
+var InquireTestAdapter = require('../inquirer-test-adapter');
 var assert = require('assert');
 var sinon = require('sinon');
 

@@ -1,9 +1,10 @@
 #! /usr/bin/env node
-var Promise = require('bluebird');
-var colors = require('colors')
+const Promise = require('bluebird');
+const colors = require('colors')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
-var exec = require('executive')
+const exec = require('executive')
 const ParseIdentifier = require('../lib/parse-identifier')
+const CmdOptionText = require('../lib/cmd-option-text')
 
 var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer) {
     var self = this;
@@ -13,8 +14,8 @@ var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer
 
     program
         .command('ssh <service>')
-        .option('-i, --identifier <name>', 'name of your stack. If omitted, the folder name will be used')
         .description('SSH into a service in the stack')
+        .option('-i, --identifier <name>', CmdOptionText.identifier)
         .action(function (service, cmd) {
             cmd.service = service
 

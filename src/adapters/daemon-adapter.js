@@ -6,7 +6,7 @@ var AgentAdapter = function(options){
     this.options = options;
 
     if(!this.options.uri){
-        throw new Error("Agent adapter missing 'uri' option.");
+        throw new Error("Daemon adapter missing 'uri' option.");
     }
 }
 

@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 var HayStackServiceAdapter = require('../../../src/adapters/haystack-service-adapter');
-var ApiTestAdapter = require('../../../src/adapters/api-test-adapter');
+var ApiTestAdapter = require('../api-test-adapter');
 var assert = require('assert');
 var sinon = require('sinon');
 
