@@ -1,6 +1,6 @@
 var StackSearch = require('../../../src/lib/stack-search')
 var HayStackServiceAdapter = require('../../../src/adapters/haystack-service-adapter');
-var ApiTestAdapter = require('../../../src/adapters/api-test-adapter');
+var ApiTestAdapter = require('../api-test-adapter');
 var chai = require('chai');
 var expect = chai.expect;
 
