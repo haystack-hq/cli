@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 var CmdPromptAdapter = require('../../../src/adapters/cmd-prompt-adapter');
-var InquireTestAdapter = require('../../../src/adapters/inquirer-test-adapter');
+var InquireTestAdapter = require('../inquirer-test-adapter');
 var HayStackServiceAdapter = require('../../../src/adapters/haystack-service-adapter');
 var ApiTestAdapter = require('../api-test-adapter');
 var CmdInfo = require('../../../src/cmd/info');
