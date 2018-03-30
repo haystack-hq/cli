@@ -1,8 +1,9 @@
 #! /usr/bin/env node
-var Promise = require('bluebird');
+const Promise = require('bluebird');
 const WebSocket = require('ws');
 const consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
+const CmdOptionText = require('../lib/cmd-option-text')
 
 var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig) {
     var self = this;
@@ -14,8 +15,8 @@ var CmdStart = function(program, hayStackServiceAdapter, cmdPromptAdapter, print
     program
         .command('start')
         .description('Launch a stack')
-        .option('-i, --identifier <name>', 'name of your stack. If omitted, the folder name will be used')
-        .option('-x, --exclude-mount', 'no file system mounts to the stack will be created')
+        .option('-i, --identifier <name>', CmdOptionText.identifier)
+        .option('-x, --exclude-mount', CmdOptionText.excludeMount)
         .action(function (cmd) {
             self.action(cmd)
         })

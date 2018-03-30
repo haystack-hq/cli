@@ -1,9 +1,10 @@
 #! /usr/bin/env node
-var Promise = require('bluebird');
+const Promise = require('bluebird');
 const WebSocket = require('ws');
 const consoleMessages = require('../lib/console-messages')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 const ParseIdentifier = require('../lib/parse-identifier')
+const CmdOptionText = require('../lib/cmd-option-text')
 
 var CmdStop = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig) {
     var self = this;
@@ -15,7 +16,7 @@ var CmdStop = function(program, hayStackServiceAdapter, cmdPromptAdapter, printe
     program
         .command('stop')
         .description('Stop a stack')
-        .option('-i, --identifier <name>', 'name of your stack. If omitted, the folder name will be used')
+        .option('-i, --identifier <name>', CmdOptionText.identifier)
         .action(function (cmd) {
             self.action(cmd)
         })

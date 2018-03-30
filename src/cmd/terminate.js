@@ -1,10 +1,11 @@
 #! /usr/bin/env node
-var Promise = require('bluebird');
+const Promise = require('bluebird');
 const WebSocket = require('ws');
 const colors = require('colors')
 const consoleMessages = require('../lib/console-messages')
 const ParseIdentifier = require('../lib/parse-identifier')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
+const CmdOptionText = require('../lib/cmd-option-text')
 
 var CmdTerminate = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer, websocketConfig) {
     var self = this;
@@ -17,7 +18,7 @@ var CmdTerminate = function(program, hayStackServiceAdapter, cmdPromptAdapter, p
         .command('terminate')
         .alias('rm')
         .description('Terminate a stack')
-        .option('-i, --identifier <name>', 'name of stack. If omitted, the stack from the current folder will be used')
+        .option('-i, --identifier <name>', CmdOptionText.identifier)
         .action(function (cmd) {
             self.action(cmd)
         })
