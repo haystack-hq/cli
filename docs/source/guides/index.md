@@ -31,9 +31,6 @@ $ hs
 ```
 
 
-Depending on your system configuration, you may be required to preface each `haystack` command with `sudo`. To avoid having to use `sudo` with the `haystack` command, your system administrator can create a Unix group called `haystack` and add users to it. 
-
-
 ## start
 
 Launch a stack on your local dev box.
@@ -172,6 +169,24 @@ $ hs mount --help
 ```
 
 
+## mounts
+
+List filesystem mounts
+
+```sh
+$ hs mounts --help
+
+  Usage: mounts
+
+  List filesystem mounts.
+
+
+  Options:
+
+    -h, --help  output usage information
+```
+
+
 ## unmount
 
 Remove a local file system mount from a stack
@@ -191,28 +206,4 @@ $ hs unmount --help
 
 ```
 
-
-## mount ls
-
-List your current mounts
-
-```
-$ hs mount ls
-
-Usage: mount ls [options] 
-
-  List your current active mounts. By default will list the mounts of the stack in the current 
-  directory. Or you may provide a specific stack identifer.
-
-
-  Options:
-    -a, --all 
-    -i, --identifier [value]	Show just the mounts for a specific stack 
-    -h, --help 					Print usage information
-
-```
-
-
-
 Visit our [Quick Start Guide](../quickstart/index.md) to launch your first stack.
-
