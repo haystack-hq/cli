@@ -14,7 +14,6 @@ var Printer = require('./lib/printer');
 var daemonOptions = { uri: config.haystack_daemon_enpoint }
 var websocketConfig = { uri: config.haystack_websocket_endpoint }
 
-
 /* setup the adapters */
 var apiAdapter = new DaemonAdapter(daemonOptions);
 var apiServiceAdapter = new HayStackServiceAdapter(apiAdapter);
@@ -27,6 +26,5 @@ fs.readdirSync(cmdFolder).forEach(function(file) {
     var cmd = require(cmdFolder + "/" + file);
     var c = new cmd(program, apiServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 });
-
 
 program.parse(process.argv);

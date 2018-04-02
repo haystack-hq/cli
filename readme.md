@@ -1,12 +1,11 @@
 # Haystack CLI
-A command line interface do build and deploy haystacks.
+A command line interface to build and deploy haystacks.
 
 ## Contributing Requirements
 * Create supporting docs at /docs
 ..* Add change history to the /docs/release-notes.md file
 * Add Gherkin stories for Behavior Driven Development at /tests
 * 100% code test coverage
-
 
 ---
 
@@ -18,49 +17,11 @@ A command line interface do build and deploy haystacks.
 $ sh scripts/setup.sh
 ```
 
+### Pointing your development directory to run within the `hs` command
+You may have an existing installation of Haystack CLI. In this case you will want to create a symlink to this development directory instead of the default.
 
-### Pointing your develoment directory to run within the $hs command
-You may have an existing installation of Haystack CLI. In this case you will want to point the cli pointer to this development directory instead of the default.
-
-TODO
-
-
-
-### Changing the default API endpoint
-By default the Haystack CLI points to api.haystackhub.com.  You can update the cli endpoint with an environment variable.
-
-```sh
-$ export HAYSTACK_CLI_API_ENDPOINT="example-haystack-api.localhost"
 ```
-
-To switch back to the default
-
-```sh
-$ unset HAYSTACK_CLI_API_ENDPOINT
-```
-
-### Switching to Debug Mode
-Debug mode has three options:
-
-* off (Default) (No debug output) 
-* log (Debugging is output to a logfile)
-* inline (Debugging information is displayed in the console)
-
-To turn debug mode on:
-
-```sh
-$ export HAYSTACK_CLI_DEBUG_MODE="log"
-```
-
-
-To turn debug mode off:
-
-```sh
-$ export HAYSTACK_CLI_DEBUG_MODE="off"
-
-//or
-
-$ unset HAYSTACK_CLI_DEBUG_MODE
+ln -s /path/to/haystack-cli/src/index.js /usr/local/bin/hs
 ```
 
 ## Contributing to the /docs
@@ -72,7 +33,7 @@ All docs are written in simple markdown language. We use a doc publishing tool c
 
 Follow the directions here to [install mkdocs](http://www.mkdocs.org/#installation) on your local machine.
 
-### Copiling and previewing the docs
+### Compiling and previewing the docs
 
 Start the docs local server. 
 
@@ -87,7 +48,7 @@ In serve mode, mkdocs supports realtime updates, so changing your docs should up
 
 Note: [aws cli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) needs to be installed and configured. 
 
-```
+```sh
 $ sh scripts/docs-publish.sh
 ```
 
@@ -98,7 +59,7 @@ Markdown preview tool for sublime allows you to preview the markdown in realtime
 
 * https://packagecontrol.io/packages/Markdown%20Preview
 
-Examples and references for markdown witnh material theme
+Examples and references for markdown with material theme
 
 * http://squidfunk.github.io/mkdocs-material/
 
