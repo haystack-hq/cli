@@ -5,14 +5,14 @@ const GracefulErrorHandler = require('../lib/graceful-error-handler')
 const ParseIdentifier = require('../lib/parse-identifier')
 const CmdOptionText = require('../lib/cmd-option-text')
 
-var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer) {
+var CmdUnmount = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer) {
     var self = this;
     this.hayStackServiceAdapter = hayStackServiceAdapter;
     this.cmdPromptAdapter = cmdPromptAdapter;
     this.printer = printer
 
     program
-        .command('unmount [services...]')
+        .command('unmount <services...>')
         .description('Unmount a filesystem mount to the stack services.')
         .option('-i, --identifier <name>', CmdOptionText.identifier)
         .action(function (services, cmd) {
@@ -23,7 +23,7 @@ var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer
         })
 }
 
-CmdSsh.prototype.action = function(cmd) {
+CmdUnmount.prototype.action = function(cmd) {
     var self = this
 
     this.parseOptions(cmd)
@@ -38,7 +38,7 @@ CmdSsh.prototype.action = function(cmd) {
         })
 }
 
-CmdSsh.prototype.parseOptions = function (options) {
+CmdUnmount.prototype.parseOptions = function (options) {
     var data = {}
 
     if (options.services) {
@@ -48,7 +48,7 @@ CmdSsh.prototype.parseOptions = function (options) {
     return ParseIdentifier(this, options, data)
 }
 
-CmdSsh.prototype.do = function(data) {
+CmdUnmount.prototype.do = function(data) {
     var self = this;
 
     return new Promise(function(resolve, reject) {
@@ -62,4 +62,4 @@ CmdSsh.prototype.do = function(data) {
     })
 }
 
-module.exports = CmdSsh;
+module.exports = CmdUnmount;

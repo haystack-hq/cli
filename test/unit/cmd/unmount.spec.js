@@ -12,7 +12,7 @@ chai.use(chaiAsPromised);
 var colors = require('colors')
 var Printer = require('../../../src/lib/printer')
 
-describe('cmd-mount', function () {
+describe('cmd-unmount', function () {
 
     var cmdPromptAdapter = new CmdPromptAdapter(new InquireTestAdapter());
     var response = {

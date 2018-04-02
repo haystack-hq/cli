@@ -14,7 +14,7 @@ var colors = require('colors');
 const Table = require('cli-table2')
 const capitalize = require('capitalize')
 
-describe('cmd-info', function () {
+describe('cmd-logs', function () {
 
     var printer = new Printer()
     var cmdPromptAdapter = new CmdPromptAdapter(new InquireTestAdapter());
