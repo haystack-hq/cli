@@ -1,8 +1,9 @@
 #! /usr/bin/env node
-var Promise = require('bluebird');
-var colors = require('colors')
+const Promise = require('bluebird');
+const colors = require('colors')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 const ParseIdentifier = require('../lib/parse-identifier')
+const CmdOptionText = require('../lib/cmd-option-text')
 
 var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer) {
     var self = this;
@@ -12,8 +13,8 @@ var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer
 
     program
         .command('unmount [services...]')
-        .option('-i, --identifier <name>', 'name of your stack. If omitted, the folder name will be used')
         .description('Unmount a filesystem mount to the stack services.')
+        .option('-i, --identifier <name>', CmdOptionText.identifier)
         .action(function (services, cmd) {
             if(services.length) {
                 cmd.services = services

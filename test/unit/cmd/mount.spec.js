@@ -29,7 +29,8 @@ describe('cmd-mount', function () {
 
         var options = {
             identifier: 'test',
-            services: ['one', 'two']
+            services: ['one', 'two'],
+            directory: '/path/to/mount'
         }
 
         expect(cmdMount.parseOptions(options)).to.eventually.deep.equal(options)

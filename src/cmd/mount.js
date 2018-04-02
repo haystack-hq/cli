@@ -1,8 +1,9 @@
 #! /usr/bin/env node
-var Promise = require('bluebird');
-var colors = require('colors')
+const Promise = require('bluebird');
+const colors = require('colors')
 const GracefulErrorHandler = require('../lib/graceful-error-handler')
 const ParseIdentifier = require('../lib/parse-identifier')
+const CmdOptionText = require('../lib/cmd-option-text')
 
 var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer) {
     var self = this;
@@ -12,8 +13,9 @@ var CmdSsh = function(program, hayStackServiceAdapter, cmdPromptAdapter, printer
 
     program
         .command('mount [services...]')
-        .option('-i, --identifier <name>', 'name of your stack. If omitted, the folder name will be used')
         .description('Create a filesystem mount to the stack services.')
+        .option('-i, --identifier <name>', CmdOptionText.identifier)
+        .option('-d, --directory <path>', CmdOptionText.directory)
         .action(function (services, cmd) {
             if(services.length) {
                 cmd.services = services
@@ -42,6 +44,10 @@ CmdSsh.prototype.parseOptions = function (options) {
 
     if (options.services) {
         data.services = options.services
+    }
+
+    if (options.directory) {
+        data.directory = options.directory
     }
 
     return ParseIdentifier(this, options, data)
