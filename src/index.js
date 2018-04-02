@@ -27,4 +27,11 @@ fs.readdirSync(cmdFolder).forEach(function(file) {
     var c = new cmd(program, apiServiceAdapter, cmdPromptAdapter, printer, websocketConfig);
 });
 
-program.parse(process.argv);
+/* define command */
+program.version('0.0.1')
+    .parse(process.argv);
+
+/* output help if no command passed */
+if (!process.argv.slice(2).length) {
+    program.outputHelp();
+}

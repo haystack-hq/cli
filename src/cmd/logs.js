@@ -13,7 +13,7 @@ var CmdLogs = function(program, hayStackServiceAdapter, cmdPromptAdapter, printe
 
     program
         .command('logs <service>')
-        .description('Information about stack')
+        .description('Display logs for a stack service')
         .option('-i, --identifier <name>', CmdOptionText.identifier)
         .action(function (cmd) {
             self.action(cmd)

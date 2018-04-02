@@ -16,7 +16,7 @@ var CmdInfo = function(program, hayStackServiceAdapter, cmdPromptAdapter, printe
 
     program
         .command('info')
-        .description('Information about stack')
+        .description('Information about the stack')
         .option('-i, --identifier <name>', CmdOptionText.identifier)
         .action(function (cmd) {
             self.action(cmd)

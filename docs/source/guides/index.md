@@ -2,108 +2,44 @@
 
 ## haystack
 
-To list available commands, either run ==haystack== or ==hs== with no parameters or execute ==haystack help==:
+To list available commands, run `haystack` or `hs` without options:
 
 
-```
-$ haystack
+```sh
+$ hs
 
-Usage: haystack or hs [options] [command]\
+  Usage: hs [options] [command]
+
 
   Options:
 
-    -h, --help  	Print usage information
-    -w, --web-help	Launch the online help documentation and tutorials		
-    -v, --version 	Print version information
+    -V, --version  output the version number
+    -h, --help     output usage information
+
 
   Commands:
 
-    signup [options]   				Signup to HayStack
-    login [options]    				Login to your HayStack account
-    config [options]				Update your account configuration
-   	stack [command] [options]		Start, manage and stop stacks
-   	mount [command] [options]		Manage local filesystem mounts to your stacks
+    info [options]                   Information about stack
+    list|ls                          List active stacks
+    logs [options] <service>         Information about stack
+    mount [options] [services...]    Create a filesystem mount to the stack services.
+    ssh [options] <service>          SSH into a service in the stack
+    start [options]                  Launch a stack
+    stop [options]                   Stop a stack
+    terminate|rm [options]           Terminate a stack
+    unmount [options] [services...]  Unmount a filesystem mount to the stack services.
 ```
 
 
-Depending on your system configuration, you may be required to preface each ==haystack== command with ==sudo==. To avoid having to use ==sudo== with the ==haystack== command, your system administrator can create a Unix group called ==haystack== and add users to it. 
+Depending on your system configuration, you may be required to preface each `haystack` command with `sudo`. To avoid having to use `sudo` with the `haystack` command, your system administrator can create a Unix group called `haystack` and add users to it. 
 
 
----
+## start
 
-## signup
-
-To begin using HayStack, use the signup command. This will create your account and send you an activation code via email. 
+Launch a stack on your local dev box.
 
 
-```
-$ hs signup
-
-Usage: signup [options]
-
-  Create a HayStack account. 
-
-
-  Options:
-
-    -e, --email  [value]     	Email
-    -u, --username  [value]     Username
-    -p, --password  [value]  	Password
-    -h, --help              	Print usage information
-```
-
-
----
-
-## login
-
-Login to your HayStack account. 
-
-
-```
-$ hs login
-
-Usage: login [options]
-
-  Login to your HayStack account. 
-
-
-  Options:
-
-    -e, --email  [value]     	Email address
-    -p, --password  [value]  	Password
-    -h, --help              	Print usage information
-```
-
-
----
-
-## config
-
-Manage your HayStack settings. From here you can set your preferences, change your password, setup your cloud credentials, etc.
-
-```
-$ hs config
-
-Usage: config [options]
-
-  Configure your HayStack account. 
-
-
-  Options:
-    -h, --help              Print usage information
-
-```
-
-
----
-
-## stack start
-
-Launch a stack in the cloud or on your local dev box.
-
-
-```
+```sh
 $ hs start --help
 
   Usage: start [options]
@@ -113,21 +49,19 @@ $ hs start --help
 
   Options:
 
-    -i, --identifier <name>  name of your stack. If omitted, the folder name will be used
+    -i, --identifier <name>  name of stack. If omitted, the stack from the current project folder will be used
     -x, --exclude-mount      no file system mounts to the stack will be created
     -h, --help               output usage information
 ```
 
-
----
 
 ## list
 
 List all your running stacks. 
 
 
-```
-$ hs list --help
+```sh
+$ hs ls --help
 
   Usage: list|ls
 
@@ -139,90 +73,69 @@ $ hs list --help
     -h, --help  output usage information
 ```
 
----
 
 ## info
 
-```
+```sh
 $ hs info --help
 
   Usage: info [options]
 
-  Information about stack
+  Information about the stack
 
 
   Options:
 
-    -i, --identifier <name>  name of stack. If omitted, the stack from the current folder will be used
+    -i, --identifier <name>  name of stack. If omitted, the stack from the current project folder will be used
     -h, --help               output usage information
 ```
 
-## stack ssh
 
----
+## ssh
 
 SSH into one of the nodes within the stack.
 
-```
-$ hs stack ssh
+```sh
+$ hs ssh --help
 
-Usage: stack ssh [options] 
+  Usage: ssh [options] <service>
 
-  Open an SSH terminal into one of the stack nodes. Omitt -n to choose node from list.
-
-
-  Options:
-    -n, --node 					The identifier of the node you are sshing into
-    -i, --identifier [value]	The stack identifier. If omitted the stack in the current directory will be used
-    -h, --help 					Print usage information
-
-```
-
----
-
-## stack nodes
-
-List the nodes in your stack
-
-```
-$ hs stack nodes
-
-Usage: stack nodes [options] 
-
-  List all the nodes in the stack
+  SSH into a service in the stack
 
 
   Options:
-    -i, --identifier [value]	The stack identifier. If omitted the stack in the current directory will be used
-    -h, --help 					Print usage information
+
+    -i, --identifier <name>  name of stack. If omitted, the stack from the current project folder will be used
+    -h, --help               output usage information
 
 ```
 
----
 
-## stack log
+## logs
 
-```
-$ hs stack log
+Display logs for a stack service
 
-Usage: log [options] 
+```sh
+$ hs logs --help
 
-  Fetch the stack launch logs or the node logs. Omitt -n to choose node from list.
+  Usage: logs [options] <service>
+
+  Display logs for stack service
 
 
   Options:
-    -n, --node 					The identifier of the node to fetch the logs from
-    -i, --identifier [value]	The stack identifier. If omitted the stack in the current directory will be used
-    -h, --help 					Print usage information
+
+    -i, --identifier <name>  name of stack. If omitted, the stack from the current project folder will be used
+    -h, --help               output usage information
 
 ```
 
----
 
 ## terminate
 
+Terminate a stack
 
-```
+```sh
 $ hs terminate --help
 
   Usage: terminate|rm [options]
@@ -232,55 +145,52 @@ $ hs terminate --help
 
   Options:
 
-    -i, --identifier <name>  name of stack. If omitted, the stack from the current folder will be used
+    -i, --identifier <name>  name of stack. If omitted, the stack from the current project folder will be used
     -h, --help               output usage information
 
 ```
 
 
----
-
 ## mount 
 
 Create a local filesystem mount to a stack
 
-```
-$ hs mount 
+```sh
+$ hs mount --help
 
-Usage: mount [options] 
+  Usage: mount [options] [services...]
 
-  Create a fileshystem mount to the stack nodes.
+  Create a filesystem mount to the stack services.
 
 
   Options:
-    -d, --directory				Speicify the root directory of the mount (default is current directory)			
-    -i, --identifier [value]	Create a mount for a specific stack
-    -h, --help 					Print usage information
+
+    -i, --identifier <name>  name of stack. If omitted, the stack from the current project folder will be used
+    -d, --directory <path>   relative or full path to directory to mount to on the local machine
+    -h, --help               output usage information
 
 ```
 
----
 
-## mount rm
+## unmount
 
 Remove a local file system mount from a stack
 
+```sh
+$ hs unmount --help
+
+  Usage: unmount [options] [services...]
+
+  Unmount a filesystem mount to the stack services.
+
+
+  Options:
+
+    -i, --identifier <name>  name of stack. If omitted, the stack from the current project folder will be used
+    -h, --help               output usage information
+
 ```
-$ hs mount rm 
 
-Usage: mount rm [options] 
-
-  Remove a mount
-  Note: removing a mount will leave the contents on the local file system.
-
-
-  Options:			
-    -i, --identifier [value]	Show just the mounts for a specific stack 
-    -h, --help 					Print usage information
-
-```
-
----
 
 ## mount ls
 
