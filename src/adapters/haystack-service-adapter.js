@@ -20,11 +20,9 @@ HayStackServiceAdapter.prototype.post = function(object, data){
 	return this.apiAdapter.request(this.headers, this.endpoint(object), 'post', data);
 }
 
-
 HayStackServiceAdapter.prototype.get = function(object, data){
     return this.apiAdapter.request(this.headers, this.endpoint(object), 'get', data);
 }
-
 
 HayStackServiceAdapter.prototype.put = function(object, data){
     return this.apiAdapter.request(this.headers, this.endpoint(object), 'put', data);
