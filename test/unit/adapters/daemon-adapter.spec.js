@@ -31,9 +31,31 @@ describe('daemon-adapter', function() {
         }
         var daemon = new DaemonAdapter(options)
 
-
         expect(daemon.request({}, 'stacks', 'get'))
             .to.be.rejectedWith('Request failed with status code 400')
+    })
+
+    it('should fail the request', function (done) {
+        var onFulfilled = sinon.spy()
+        var options = {
+            uri: 'test'
+        }
+        var daemon = new DaemonAdapter(options)
+        daemon.request({}, 'stacks', 'get', {}).catch(onFulfilled)
+
+        moxios.wait(function () {
+            let request = moxios.requests.mostRecent()
+            request.respondWith({
+                status: 403,
+                response: 'Not allowed'
+            }).then(function () {
+                expect(onFulfilled.called).to.equal(true)
+                expect(onFulfilled.args[0][0].message).to.equal('Request failed with status code 403')
+                expect(onFulfilled.args[0][0].response.data).to.equal('Not allowed')
+                
+                done()
+            })
+        })
     })
 
     it('should succeed to do request', function (done) {
