@@ -238,33 +238,16 @@ describe('cmd-info', function () {
             .to.be.rejectedWith({ message: consoleMessages.haystackNotRunning })
     })
 
-    it('should resolve the do promise because of successful getinfo', function () {
-        var apiAdapter = new ApiTestAdapter({
-            uri: 'stacks',
-            response: response
-        })
-        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
-        var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
-
-        expect(cmdInfo.do({ identifier: '/path/to/my/id' }))
-            .to.eventually.deep.equal(response)
-    })
-
-    //it('should catch that do failed', function () {
-    //    var messages = []
-    //    var printer = new Printer(function (message) {
-    //        messages.push(message)
-    //    })
+    //it('should resolve the do promise because of successful getinfo', function () {
     //    var apiAdapter = new ApiTestAdapter({
     //        uri: 'stacks',
-    //        response: []
+    //        response: response
     //    })
     //    var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
     //    var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
     //
-    //    cmdInfo.action({ identifier: '/path/to/my/id' })
-    //
-    //    expect(messages).to.deep.equal(['asd'])
+    //    expect(cmdInfo.do({ identifier: '/path/to/my/id' }))
+    //        .to.eventually.deep.equal(response)
     //})
 
     it('should print the info data', function () {

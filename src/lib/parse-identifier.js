@@ -1,5 +1,5 @@
 const StackSearch = require('../lib/stack-search')
-const Promise = require('bluebird');
+const Promise = require('bluebird')
 const consoleMessages = require('../lib/console-messages')
 
 module.exports = function (handler, options, data) {
@@ -23,7 +23,7 @@ module.exports = function (handler, options, data) {
                     reject(err)
                 })
         }
-        else if (options.identifier && typeof options.identifier === 'string') {
+        else {
             data.identifier = options.identifier
 
             resolve(data)

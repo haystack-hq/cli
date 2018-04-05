@@ -13,7 +13,6 @@ var colors = require('colors')
 var Printer = require('../../../src/lib/printer')
 
 describe('cmd-unmount', function () {
-
     var cmdPromptAdapter = new CmdPromptAdapter(new InquireTestAdapter());
     var response = {
         message: 'The stack is unmounting.'
@@ -51,7 +50,7 @@ describe('cmd-unmount', function () {
         expect(cmdUnmount.do(options)).to.eventually.equal(response)
     })
 
-    it('should send mount request and receive message back', function () {
+    it('should send mount request and receive an error', function () {
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
             error: 'error'
@@ -66,5 +65,4 @@ describe('cmd-unmount', function () {
 
         expect(cmdUnmount.do(options)).to.be.rejected
     })
-
 })
