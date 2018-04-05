@@ -83,25 +83,13 @@ CmdTerminate.prototype.websocketListeningAndConsoleMessaging = function (result)
     var self = this
 
     return new Promise(function (resolve, reject) {
-
         const ws = new WebSocket(self.websocketConfig.uri);
 
-        var error = false
-
         ws.on('error', function (err) {
-            // self.printer.print(colors.red(consoleMessages.haystackNotRunning))
-
             ws.close()
 
             reject()
-
-            error = true
         })
-
-        if (error) {
-            reject()
-            return
-        }
 
         var receivedServices = {}
         result.services.forEach(function (service) {

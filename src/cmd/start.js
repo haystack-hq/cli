@@ -101,21 +101,11 @@ CmdStart.prototype.websocketListeningAndConsoleMessaging = function (result) {
 
         const ws = new WebSocket(self.websocketConfig.uri);
 
-        var error = false
-
         ws.on('error', function (err) {
-            // self.printer.print(consoleMessages.haystackNotRunning)
-
             ws.close()
 
             reject()
-
-            error = true
         })
-
-        if (error) {
-            reject()
-        }
 
         var receivedServices = {}
         result.services.forEach(function (service) {

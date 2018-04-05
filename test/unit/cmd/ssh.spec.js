@@ -14,7 +14,6 @@ var colors = require('colors')
 var Printer = require('../../../src/lib/printer')
 
 describe('cmd-ssh', function () {
-
     var printer = new Printer()
     var cmdPromptAdapter = new CmdPromptAdapter(new InquireTestAdapter());
     var response = {
@@ -22,7 +21,6 @@ describe('cmd-ssh', function () {
     }
 
     it('should return all options when identifier passed', function () {
-
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
             response: {}
@@ -42,11 +40,9 @@ describe('cmd-ssh', function () {
         }
 
         expect(cmdSsh.parseOptions(options)).to.eventually.deep.equal(expected)
-
     })
 
     it('should return all options when no identifier passed', function () {
-
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
             response: [{
@@ -67,11 +63,26 @@ describe('cmd-ssh', function () {
         }
 
         expect(cmdSsh.parseOptions(options)).to.eventually.deep.equal(expected)
+    })
 
+    it('should error receiving command', function () {
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            error: 'error'
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdSsh = new CmdSsh(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
+
+        var options = {
+            identifier: 'abc',
+            service: 'web_1',
+            new_terminal: false
+        }
+
+        expect(cmdSsh.do(options)).to.be.rejected
     })
 
     it('should receive command to run', function () {
-
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
             response: response
@@ -86,7 +97,5 @@ describe('cmd-ssh', function () {
         }
 
         expect(cmdSsh.do(options)).to.eventually.equal(response)
-
     })
-
 })
