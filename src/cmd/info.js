@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-const Promise = require('bluebird');
+const Promise = require('bluebird')
 const colors = require('colors')
 const Table = require('cli-table2')
 const capitalize = require('capitalize')
@@ -67,7 +67,7 @@ CmdInfo.prototype.getInfo = function (data) {
                     resolve(result)
                 }
                 else {
-                    reject({ message: consoleMessages.haystackNotRunning })
+                    reject(consoleMessages.haystackNotRunning)
                 }
             })
             .catch(function (err) {

@@ -52,7 +52,7 @@ describe('daemon-adapter', function() {
                 expect(onFulfilled.called).to.equal(true)
                 expect(onFulfilled.args[0][0].message).to.equal('Request failed with status code 403')
                 expect(onFulfilled.args[0][0].response.data).to.equal('Not allowed')
-                
+
                 done()
             })
         })

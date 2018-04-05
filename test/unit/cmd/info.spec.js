@@ -1,21 +1,21 @@
 #! /usr/bin/env node
-var CmdPromptAdapter = require('../../../src/adapters/cmd-prompt-adapter');
-var InquireTestAdapter = require('../inquirer-test-adapter');
-var HayStackServiceAdapter = require('../../../src/adapters/haystack-service-adapter');
-var ApiTestAdapter = require('../api-test-adapter');
-var CmdInfo = require('../../../src/cmd/info');
-var program = require('commander');
-var chai = require('chai');
-var expect = chai.expect;
-var chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
+var CmdPromptAdapter = require('../../../src/adapters/cmd-prompt-adapter')
+var InquireTestAdapter = require('../inquirer-test-adapter')
+var HayStackServiceAdapter = require('../../../src/adapters/haystack-service-adapter')
+var ApiTestAdapter = require('../api-test-adapter')
+var CmdInfo = require('../../../src/cmd/info')
+var program = require('commander')
+var chai = require('chai')
+var expect = chai.expect
+var chaiAsPromised = require("chai-as-promised")
+chai.use(chaiAsPromised)
 var Printer = require('../../../src/lib/printer')
 var colors = require('colors');
 const Table = require('cli-table2')
 const capitalize = require('capitalize')
+var consoleMessages = require('../../../src/lib/console-messages')
 
 describe('cmd-info', function () {
-
     var printer = new Printer()
     var cmdPromptAdapter = new CmdPromptAdapter(new InquireTestAdapter());
     var response = {
@@ -49,7 +49,7 @@ describe('cmd-info', function () {
         "health": "unhealthy",
         "created_by": null,
         "do_mount": false,
-        "terminated_on": null,
+        "terminated_on": '12345',
         "haystack_file": {
             "services": {
                 "web_1": {
@@ -143,7 +143,6 @@ describe('cmd-info', function () {
     })
 
     it('should request to get the identifier via search and get empty response, err with message', function () {
-
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
             response: []
@@ -152,11 +151,9 @@ describe('cmd-info', function () {
         var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
 
         expect(cmdInfo.parseOptions({})).to.be.rejectedWith('No stack found at this location')
-
     })
 
     it('should request to get the identifier via search', function () {
-
         var searchResult = [{
             _id: '768fdec94deb4c3fa1b2344b414f7766',
             identifier: 'test',
@@ -181,11 +178,9 @@ describe('cmd-info', function () {
         var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
 
         expect(cmdInfo.parseOptions({})).to.eventually.contain({ identifier: 'test' })
-
     })
 
     it('should have the identifier passed as the identifier option', function () {
-
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
             response: response
@@ -194,11 +189,33 @@ describe('cmd-info', function () {
         var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
 
         expect(cmdInfo.parseOptions({ identifier: 'my-id' })).to.eventually.deep.equal({ identifier: 'my-id' })
+    })
 
+    it('should reject info because of request error', function () {
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            error: 'error'
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
+
+        expect(cmdInfo.getInfo({ identifier: '/path/to/my/id' }))
+            .to.be.rejectedWith('error')
+    })
+
+    it('should fail to receive data', function () {
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            response: []
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
+
+        expect(cmdInfo.getInfo({ identifier: '/path/to/my/id' }))
+            .to.be.rejectedWith(consoleMessages.haystackNotRunning)
     })
 
     it('should request and receive data correctly', function () {
-
         var apiAdapter = new ApiTestAdapter({
             uri: 'stacks',
             response: response
@@ -207,11 +224,50 @@ describe('cmd-info', function () {
         var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
 
         expect(cmdInfo.getInfo({ identifier: '/path/to/my/id' })).to.eventually.equal(response)
-
     })
 
-    it('should print the info data', function () {
+    it('should catch that getinfo failed', function () {
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            response: []
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
 
+        expect(cmdInfo.do({ identifier: '/path/to/my/id' }))
+            .to.be.rejectedWith({ message: consoleMessages.haystackNotRunning })
+    })
+
+    it('should resolve the do promise because of successful getinfo', function () {
+        var apiAdapter = new ApiTestAdapter({
+            uri: 'stacks',
+            response: response
+        })
+        var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+        var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
+
+        expect(cmdInfo.do({ identifier: '/path/to/my/id' }))
+            .to.eventually.deep.equal(response)
+    })
+
+    //it('should catch that do failed', function () {
+    //    var messages = []
+    //    var printer = new Printer(function (message) {
+    //        messages.push(message)
+    //    })
+    //    var apiAdapter = new ApiTestAdapter({
+    //        uri: 'stacks',
+    //        response: []
+    //    })
+    //    var hayStackServiceAdapter = new HayStackServiceAdapter(apiAdapter);
+    //    var cmdInfo = new CmdInfo(program, hayStackServiceAdapter, cmdPromptAdapter, printer);
+    //
+    //    cmdInfo.action({ identifier: '/path/to/my/id' })
+    //
+    //    expect(messages).to.deep.equal(['asd'])
+    //})
+
+    it('should print the info data', function () {
         var messages = []
         printer = new Printer(function (message) {
             messages.push(message)
@@ -286,7 +342,5 @@ describe('cmd-info', function () {
         cmdInfo.printInfo(response)
 
         expect(messages).to.deep.equal(expected)
-
     })
-
 })
