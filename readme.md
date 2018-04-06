@@ -1,4 +1,4 @@
-# Haystack CLI
+# Haystack CLI [![Build Status](https://travis-ci.org/haystack-hq/cli.svg?branch=master)](https://travis-ci.org/haystack-hq/cli)
 A command line interface to build and deploy haystacks.
 
 ## Contributing Requirements
